@@ -18,16 +18,11 @@ export const useAnalytics = () => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  // Récupérer les analytics d'usage
+  // Récupérer les analytics d'usage avec RPC pour éviter les problèmes de types
   const { data: analytics, isLoading: isLoadingAnalytics } = useQuery({
     queryKey: ['usage-analytics'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('usage_analytics')
-        .select('*')
-        .order('date', { ascending: false })
-        .limit(30) // Derniers 30 jours
-
+      const { data, error } = await supabase.rpc('get_usage_analytics', { days_limit: 30 })
       if (error) throw error
       return data as UsageAnalytics[]
     }

@@ -1,5 +1,4 @@
 
-import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
@@ -20,17 +19,13 @@ export const useUserRoles = () => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  // Récupérer les rôles de l'utilisateur connecté
+  // Récupérer les rôles de l'utilisateur connecté avec RPC
   const { data: userRoles, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['user-roles', user?.id],
     queryFn: async () => {
       if (!user) return []
       
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('*')
-        .eq('user_id', user.id)
-
+      const { data, error } = await supabase.rpc('get_user_roles', { _user_id: user.id })
       if (error) throw error
       return data as UserRole[]
     },
@@ -78,38 +73,23 @@ export const useRoleManagement = () => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  // Récupérer tous les utilisateurs avec leurs rôles
+  // Récupérer tous les utilisateurs avec leurs rôles avec RPC
   const { data: allUsers, isLoading: isLoadingUsers } = useQuery({
     queryKey: ['all-users-with-roles'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          *,
-          user_roles (
-            id,
-            role,
-            assigned_at,
-            assigned_by
-          )
-        `)
-
+      const { data, error } = await supabase.rpc('get_all_users_with_roles')
       if (error) throw error
       return data
     }
   })
 
-  // Assigner un rôle à un utilisateur
+  // Assigner un rôle à un utilisateur avec RPC
   const assignRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string, role: AppRole }) => {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role: role
-        })
-        .select()
-
+      const { data, error } = await supabase.rpc('assign_user_role', {
+        _user_id: userId,
+        _role: role
+      })
       if (error) throw error
       return data
     },
@@ -130,14 +110,10 @@ export const useRoleManagement = () => {
     }
   })
 
-  // Supprimer un rôle d'un utilisateur
+  // Supprimer un rôle d'un utilisateur avec RPC
   const removeRoleMutation = useMutation({
     mutationFn: async (roleId: string) => {
-      const { error } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('id', roleId)
-
+      const { error } = await supabase.rpc('remove_user_role', { _role_id: roleId })
       if (error) throw error
     },
     onSuccess: () => {

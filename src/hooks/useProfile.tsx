@@ -69,7 +69,7 @@ export const useProfile = () => {
           score,
           mode,
           time_spent,
-          quizzes (
+          quizzes!inner (
             title,
             created_at
           )
@@ -78,7 +78,22 @@ export const useProfile = () => {
         .order('completed_at', { ascending: false })
 
       if (error) throw error
-      return data as QuizHistory[]
+      
+      // Transformer les données pour correspondre à l'interface QuizHistory
+      const transformedData = data?.map(item => ({
+        id: item.id,
+        quiz_id: item.quiz_id,
+        completed_at: item.completed_at,
+        score: item.score,
+        mode: item.mode,
+        time_spent: item.time_spent,
+        quiz: {
+          title: (item.quizzes as any).title,
+          created_at: (item.quizzes as any).created_at
+        }
+      })) || []
+
+      return transformedData as QuizHistory[]
     },
     enabled: !!user
   })
