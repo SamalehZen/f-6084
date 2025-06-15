@@ -2,7 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,24 +18,21 @@ serve(async (req) => {
   try {
     const { pdfDataUri } = await req.json();
 
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
+    if (!geminiApiKey) {
+      throw new Error('Gemini API key not configured');
     }
 
-    console.log('Starting PDF text extraction with OpenAI...');
+    console.log('Starting PDF text extraction with Gemini...');
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: `Tu es un expert en extraction de texte à partir de documents PDF.
+        contents: [{
+          parts: [{
+            text: `Tu es un expert en extraction de texte à partir de documents PDF.
 
 Analyse le document PDF fourni et extrait tout le contenu textuel de manière précise et structurée.
 
@@ -51,36 +48,34 @@ Retourne le résultat au format JSON avec:
 - success: true si l'extraction a réussi, false sinon
 - error: message d'erreur si applicable
 
-Assure-toi que le texte extrait est exploitable pour générer des questions de quiz pertinentes.`
+Assure-toi que le texte extrait est exploitable pour générer des questions de quiz pertinentes.
+
+Analyse ce document PDF et extrait tout son contenu textuel:`
           },
           {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: 'Analyse ce document PDF et extrait tout son contenu textuel:'
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: pdfDataUri
-                }
-              }
-            ]
-          }
-        ],
-        response_format: { type: 'json_object' },
-        max_tokens: 4000
+            inline_data: {
+              mime_type: "application/pdf",
+              data: pdfDataUri.split(',')[1] // Remove data:application/pdf;base64, prefix
+            }
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.1,
+          topK: 20,
+          topP: 0.8,
+          maxOutputTokens: 4000,
+          response_mime_type: "application/json"
+        }
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`OpenAI API error: ${errorData.error?.message || response.statusText}`);
+      throw new Error(`Gemini API error: ${errorData.error?.message || response.statusText}`);
     }
 
     const data = await response.json();
-    const result = JSON.parse(data.choices[0].message.content);
+    const result = JSON.parse(data.candidates[0].content.parts[0].text);
 
     console.log('PDF text extraction completed. Text length:', result.extractedText?.length || 0);
 
