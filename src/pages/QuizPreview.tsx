@@ -73,9 +73,9 @@ const QuizPreview = () => {
     )
   }
 
-  // Type-safe parsing of questions
+  // Type-safe parsing of questions with proper casting through unknown
   const questions: QuizQuestion[] = Array.isArray(quiz.questions) 
-    ? quiz.questions as QuizQuestion[]
+    ? (quiz.questions as unknown) as QuizQuestion[]
     : []
 
   // Type-safe parsing of settings
