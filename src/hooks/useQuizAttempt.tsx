@@ -86,7 +86,7 @@ export const useQuizAttempt = () => {
         .insert({
           quiz_id: attemptData.quizId,
           user_id: user.id,
-          answers: attemptData.answers,
+          answers: attemptData.answers as any, // Cast to any to satisfy Json type
           mode: attemptData.mode,
           time_spent: totalTimeSpent,
           completed_at: new Date().toISOString()
