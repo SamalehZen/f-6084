@@ -9,6 +9,21 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Edit, Play, Share } from 'lucide-react'
 
+interface QuizQuestion {
+  id: string
+  type: string
+  question: string
+  options?: string[]
+  correctAnswer?: number
+  explanation?: string
+}
+
+interface QuizSettings {
+  difficulty?: string
+  questionType?: string
+  questionCount?: number
+}
+
 const QuizPreview = () => {
   const { quizId } = useParams<{ quizId: string }>()
   const navigate = useNavigate()
@@ -58,7 +73,15 @@ const QuizPreview = () => {
     )
   }
 
-  const questions = quiz.questions || []
+  // Type-safe parsing of questions
+  const questions: QuizQuestion[] = Array.isArray(quiz.questions) 
+    ? quiz.questions as QuizQuestion[]
+    : []
+
+  // Type-safe parsing of settings
+  const settings: QuizSettings = (quiz.settings && typeof quiz.settings === 'object' && !Array.isArray(quiz.settings))
+    ? quiz.settings as QuizSettings
+    : {}
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -119,14 +142,14 @@ const QuizPreview = () => {
               <div>
                 <span className="text-sm font-medium text-muted-foreground">Difficulté</span>
                 <p className="text-lg font-semibold capitalize">
-                  {quiz.settings?.difficulty || 'Non définie'}
+                  {settings.difficulty || 'Non définie'}
                 </p>
               </div>
               <div>
                 <span className="text-sm font-medium text-muted-foreground">Type</span>
                 <p className="text-lg font-semibold">
-                  {quiz.settings?.questionType === 'qcm' ? 'QCM' : 
-                   quiz.settings?.questionType === 'vrai-faux' ? 'Vrai/Faux' : 
+                  {settings.questionType === 'qcm' ? 'QCM' : 
+                   settings.questionType === 'vrai-faux' ? 'Vrai/Faux' : 
                    'Mixte'}
                 </p>
               </div>
@@ -136,7 +159,7 @@ const QuizPreview = () => {
 
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Questions du Quiz</h2>
-          {questions.map((question: any, index: number) => (
+          {questions.map((question: QuizQuestion, index: number) => (
             <Card key={question.id || index}>
               <CardHeader>
                 <CardTitle className="text-lg">
