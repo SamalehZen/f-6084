@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -75,13 +74,13 @@ const QuizPreview = () => {
   }
 
   // Type-safe parsing of questions with proper casting through unknown
-  const questions: QuizQuestion[] = Array.isArray(quiz.questions) 
-    ? (quiz.questions as unknown) as QuizQuestion[]
+  const questions = Array.isArray(quiz.questions) 
+    ? (quiz.questions as unknown) as any[]
     : []
 
   // Type-safe parsing of settings
-  const settings: QuizSettings = (quiz.settings && typeof quiz.settings === 'object' && !Array.isArray(quiz.settings))
-    ? quiz.settings as QuizSettings
+  const settings = (quiz.settings && typeof quiz.settings === 'object' && !Array.isArray(quiz.settings))
+    ? quiz.settings as any
     : {}
 
   const handleBack = () => navigate('/dashboard')
@@ -91,6 +90,7 @@ const QuizPreview = () => {
       <QuizHeader 
         title={quiz.title}
         questionCount={questions.length}
+        quizId={quizId}
         onBack={handleBack}
       />
 

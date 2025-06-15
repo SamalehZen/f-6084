@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload";
 import QuizSettings from "./pages/QuizSettings";
 import QuizPreview from "./pages/QuizPreview";
+import QuizStart from "./pages/QuizStart";
+import QuizTake from "./pages/QuizTake";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +64,24 @@ const App = () => (
                   <AppLayout>
                     <QuizPreview />
                   </AppLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/quiz/:quizId/start" 
+              element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <QuizStart />
+                  </AppLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/quiz/:quizId/take" 
+              element={
+                <ProtectedRoute>
+                  <QuizTake />
                 </ProtectedRoute>
               } 
             />
