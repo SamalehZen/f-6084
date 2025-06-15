@@ -1,19 +1,20 @@
+
 import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from '@/components/ui/toaster'
 import { useAuth } from '@/hooks/useAuth'
-import { AppLayout } from '@/layouts/AppLayout'
-import { Index } from '@/pages/Index'
-import { Auth } from '@/pages/Auth'
-import { Dashboard } from '@/pages/Dashboard'
-import { Upload } from '@/pages/Upload'
-import { QuizSettings } from '@/pages/QuizSettings'
-import { QuizPreview } from '@/pages/QuizPreview'
-import { QuizStart } from '@/pages/QuizStart'
-import { QuizTake } from '@/pages/QuizTake'
-import { QuizResults } from '@/pages/QuizResults'
-import { NotFound } from '@/pages/NotFound'
+import AppLayout from '@/components/layout/AppLayout'
+import Index from '@/pages/Index'
+import Auth from '@/pages/Auth'
+import Dashboard from '@/pages/Dashboard'
+import Upload from '@/pages/Upload'
+import QuizSettings from '@/pages/QuizSettings'
+import QuizPreview from '@/pages/QuizPreview'
+import QuizStart from '@/pages/QuizStart'
+import QuizTake from '@/pages/QuizTake'
+import QuizResults from '@/pages/QuizResults'
+import NotFound from '@/pages/NotFound'
 
 const queryClient = new QueryClient()
 
@@ -99,9 +100,9 @@ function App() {
 }
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isLoggedIn } = useAuth()
+  const { user } = useAuth()
 
-  if (!isLoggedIn) {
+  if (!user) {
     window.location.href = '/auth'
     return null
   }
