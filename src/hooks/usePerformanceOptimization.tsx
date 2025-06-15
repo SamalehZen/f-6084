@@ -98,3 +98,13 @@ export function useDebounce<T>(value: T, delay: number): T {
 
   return debouncedValue
 }
+
+// Hook principal qui combine toutes les optimisations
+export const usePerformanceOptimization = () => {
+  useLazyLoading()
+  const metrics = usePerformanceMonitoring()
+  
+  return {
+    metrics
+  }
+}
