@@ -8,6 +8,7 @@ import AppLayout from '@/components/layout/AppLayout'
 import Index from '@/pages/Index'
 import Auth from '@/pages/Auth'
 import Dashboard from '@/pages/Dashboard'
+import Documents from '@/pages/Documents'
 import Upload from '@/pages/Upload'
 import QuizSettings from '@/pages/QuizSettings'
 import QuizPreview from '@/pages/QuizPreview'
@@ -34,6 +35,16 @@ function App() {
                 <ProtectedRoute>
                   <AppLayout>
                     <Dashboard />
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/documents"
+              element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Documents />
                   </AppLayout>
                 </ProtectedRoute>
               }

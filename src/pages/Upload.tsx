@@ -5,21 +5,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import FileUploadZone from '@/components/upload/FileUploadZone';
 import PDFPreview from '@/components/upload/PDFPreview';
 import { useDocuments } from '@/hooks/useDocuments';
-import { ArrowLeft, Upload } from 'lucide-react';
+import { ArrowLeft, Upload, CheckCircle, Info } from 'lucide-react';
 
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
   const { uploadDocument } = useDocuments();
   const navigate = useNavigate();
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
     setTitle(file.name.replace('.pdf', ''));
+    setUploadSuccess(false);
   };
 
   const handleUpload = async () => {
@@ -32,13 +35,15 @@ const UploadPage = () => {
         title: title || selectedFile.name.replace('.pdf', '') 
       });
       setUploadProgress(100);
+      setUploadSuccess(true);
       
-      // Redirect to dashboard after successful upload
+      // Redirect to documents page after successful upload
       setTimeout(() => {
-        navigate('/dashboard');
-      }, 1000);
+        navigate('/documents');
+      }, 2000);
     } catch (error) {
       setUploadProgress(0);
+      setUploadSuccess(false);
     }
   };
 
@@ -63,6 +68,16 @@ const UploadPage = () => {
           </p>
         </div>
 
+        {uploadSuccess && (
+          <Alert className="mb-6 border-green-200 bg-green-50">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              Document uploadé avec succès ! Le traitement par l'IA est en cours. 
+              Vous serez redirigé vers vos documents dans quelques secondes...
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <Card>
@@ -81,7 +96,7 @@ const UploadPage = () => {
               </CardContent>
             </Card>
 
-            {selectedFile && (
+            {selectedFile && !uploadSuccess && (
               <Card>
                 <CardHeader>
                   <CardTitle>Détails du document</CardTitle>
@@ -109,6 +124,37 @@ const UploadPage = () => {
                 </CardContent>
               </Card>
             )}
+
+            {uploadSuccess && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Traitement en cours</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertDescription>
+                      Votre document est en cours d'analyse par notre IA. 
+                      Cette étape peut prendre quelques minutes. 
+                      Vous pourrez générer un quiz une fois le traitement terminé.
+                    </AlertDescription>
+                  </Alert>
+                  
+                  <div className="mt-4 space-y-2">
+                    <Button variant="outline" asChild className="w-full">
+                      <a href="/documents">
+                        Voir mes documents
+                      </a>
+                    </Button>
+                    <Button variant="ghost" asChild className="w-full">
+                      <a href="/upload">
+                        Uploader un autre document
+                      </a>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           <div>
@@ -116,7 +162,11 @@ const UploadPage = () => {
               <PDFPreview
                 fileName={selectedFile.name}
                 fileSize={selectedFile.size}
-                contentSummary={uploadDocument.isPending ? 'Analyse en cours...' : undefined}
+                contentSummary={
+                  uploadDocument.isPending ? 'Analyse en cours...' : 
+                  uploadSuccess ? 'Document uploadé avec succès !' : 
+                  undefined
+                }
               />
             )}
           </div>
