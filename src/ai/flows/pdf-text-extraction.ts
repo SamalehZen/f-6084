@@ -19,19 +19,11 @@ export const extractTextFromPdf = ai.defineFlow(
     try {
       console.log('Starting PDF text extraction with Genkit/Gemini...');
       
-      const response = await ai.generate({
-        model,
-        prompt: extractTextFromPdfPrompt,
-        input: {
-          pdfDataUri: input.pdfDataUri
-        },
-        config: {
-          temperature: 0.1, // Low temperature for consistent extraction
-          maxOutputTokens: 4096
-        }
+      const response = await extractTextFromPdfPrompt({
+        pdfDataUri: input.pdfDataUri
       });
 
-      const result = response.output();
+      const result = response;
       console.log('PDF text extraction completed. Text length:', result.extractedText?.length || 0);
       
       if (!result.success || !result.extractedText) {
