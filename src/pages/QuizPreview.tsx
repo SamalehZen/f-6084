@@ -4,10 +4,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Edit, Play, Share } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
+import QuizHeader from '@/components/quiz/QuizHeader'
+import QuizInfo from '@/components/quiz/QuizInfo'
+import QuestionsList from '@/components/quiz/QuestionsList'
 
 interface QuizQuestion {
   id: string
@@ -83,128 +84,24 @@ const QuizPreview = () => {
     ? quiz.settings as QuizSettings
     : {}
 
+  const handleBack = () => navigate('/dashboard')
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/dashboard')}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Retour
-        </Button>
-        
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">{quiz.title}</h1>
-            <p className="text-muted-foreground">
-              {questions.length} question{questions.length > 1 ? 's' : ''}
-            </p>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button variant="outline">
-              <Edit className="mr-2 h-4 w-4" />
-              Modifier
-            </Button>
-            <Button variant="outline">
-              <Share className="mr-2 h-4 w-4" />
-              Partager
-            </Button>
-            <Button>
-              <Play className="mr-2 h-4 w-4" />
-              Tester le Quiz
-            </Button>
-          </div>
-        </div>
-      </div>
+      <QuizHeader 
+        title={quiz.title}
+        questionCount={questions.length}
+        onBack={handleBack}
+      />
 
       <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Informations du Quiz</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Statut</span>
-                <div className="mt-1">
-                  <Badge variant={quiz.is_published ? "default" : "secondary"}>
-                    {quiz.is_published ? "Publié" : "Brouillon"}
-                  </Badge>
-                </div>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Questions</span>
-                <p className="text-lg font-semibold">{questions.length}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Difficulté</span>
-                <p className="text-lg font-semibold capitalize">
-                  {settings.difficulty || 'Non définie'}
-                </p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Type</span>
-                <p className="text-lg font-semibold">
-                  {settings.questionType === 'qcm' ? 'QCM' : 
-                   settings.questionType === 'vrai-faux' ? 'Vrai/Faux' : 
-                   'Mixte'}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <QuizInfo 
+          isPublished={quiz.is_published}
+          questionCount={questions.length}
+          settings={settings}
+        />
 
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Questions du Quiz</h2>
-          {questions.map((question: QuizQuestion, index: number) => (
-            <Card key={question.id || index}>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  Question {index + 1}
-                </CardTitle>
-                <CardDescription>
-                  {question.question}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {question.type === 'qcm' && question.options && (
-                  <div className="space-y-2">
-                    {question.options.map((option: string, optionIndex: number) => (
-                      <div 
-                        key={optionIndex}
-                        className={`p-3 rounded-lg border ${
-                          optionIndex === question.correctAnswer 
-                            ? 'bg-green-50 border-green-200 text-green-800' 
-                            : 'bg-gray-50 border-gray-200'
-                        }`}
-                      >
-                        <span className="font-medium">
-                          {String.fromCharCode(65 + optionIndex)}. 
-                        </span>
-                        {option}
-                        {optionIndex === question.correctAnswer && (
-                          <Badge className="ml-2" variant="secondary">
-                            Réponse correcte
-                          </Badge>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                
-                {question.explanation && (
-                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm font-medium text-blue-800 mb-1">Explication:</p>
-                    <p className="text-sm text-blue-700">{question.explanation}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <QuestionsList questions={questions} />
       </div>
     </div>
   )
