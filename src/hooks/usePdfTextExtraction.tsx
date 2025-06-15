@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { extractTextFromPdf } from '@/ai/flows/pdf-text-extraction';
+import { supabase } from '@/integrations/supabase/client';
 
 export const usePdfTextExtraction = () => {
   const [isExtracting, setIsExtracting] = useState(false);
@@ -23,21 +23,27 @@ export const usePdfTextExtraction = () => {
       console.log('Converting PDF to Data URI...');
       const pdfDataUri = await convertFileToDataUri(file);
       
-      console.log('Extracting text with Genkit/Gemini...');
-      const result = await extractTextFromPdf({ pdfDataUri });
+      console.log('Extracting text with OpenAI via Edge Function...');
+      const { data, error } = await supabase.functions.invoke('extract-pdf-text', {
+        body: { pdfDataUri }
+      });
       
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to extract text');
+      if (error) {
+        throw new Error(error.message || 'Failed to extract text');
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to extract text');
       }
       
-      console.log('Text extraction successful. Length:', result.extractedText.length);
+      console.log('Text extraction successful. Length:', data.extractedText.length);
       
       toast({
         title: "Extraction réussie",
-        description: `Texte extrait avec succès (${result.extractedText.length} caractères)`,
+        description: `Texte extrait avec succès (${data.extractedText.length} caractères)`,
       });
       
-      return result.extractedText;
+      return data.extractedText;
     } catch (error) {
       console.error('PDF text extraction error:', error);
       toast({
