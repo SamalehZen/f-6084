@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -6,49 +7,125 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Simple PDF text extraction function
+// Improved PDF text extraction function
 async function extractTextFromPDF(pdfBuffer: Uint8Array): Promise<string> {
   try {
-    // Convert buffer to string for basic text extraction
-    const pdfText = new TextDecoder('utf-8', { ignoreBOM: true, fatal: false }).decode(pdfBuffer);
+    // Convert buffer to string for analysis
+    const pdfText = new TextDecoder('latin1').decode(pdfBuffer);
     
-    // Extract text between 'stream' and 'endstream' markers (simplified PDF parsing)
-    const streamRegex = /stream\s*([\s\S]*?)\s*endstream/g;
+    console.log('PDF buffer size:', pdfBuffer.length);
+    console.log('PDF header check:', pdfText.substring(0, 10));
+    
+    // Check if it's a valid PDF
+    if (!pdfText.startsWith('%PDF-')) {
+      return "Fichier PDF invalide ou corrompu. Veuillez vérifier que le fichier est un PDF valide.";
+    }
+    
     let extractedText = '';
-    let match;
     
-    while ((match = streamRegex.exec(pdfText)) !== null) {
-      const streamContent = match[1];
-      // Clean up the content - remove non-printable characters but keep text
-      const cleanContent = streamContent
-        .replace(/[^\x20-\x7E\n\r\t]/g, ' ') // Keep only printable ASCII + whitespace
-        .replace(/\s+/g, ' ') // Normalize whitespace
+    // Method 1: Extract text from text objects (BT...ET blocks)
+    const textObjectRegex = /BT\s+(.*?)\s+ET/gs;
+    let textMatches = pdfText.match(textObjectRegex);
+    
+    if (textMatches) {
+      for (const textBlock of textMatches) {
+        // Extract text from Tj commands
+        const tjRegex = /\((.*?)\)\s*Tj/g;
+        let tjMatch;
+        while ((tjMatch = tjRegex.exec(textBlock)) !== null) {
+          const text = tjMatch[1];
+          if (text && text.length > 1) {
+            extractedText += text + ' ';
+          }
+        }
+        
+        // Extract text from TJ commands (array format)
+        const tjArrayRegex = /\[(.*?)\]\s*TJ/g;
+        let tjArrayMatch;
+        while ((tjArrayMatch = tjArrayRegex.exec(textBlock)) !== null) {
+          const arrayContent = tjArrayMatch[1];
+          // Extract strings from the array
+          const stringRegex = /\((.*?)\)/g;
+          let stringMatch;
+          while ((stringMatch = stringRegex.exec(arrayContent)) !== null) {
+            const text = stringMatch[1];
+            if (text && text.length > 1) {
+              extractedText += text + ' ';
+            }
+          }
+        }
+      }
+    }
+    
+    // Method 2: Look for readable text patterns in the entire PDF
+    if (extractedText.length < 50) {
+      console.log('Method 1 failed, trying method 2...');
+      
+      // Find text between parentheses (common PDF text format)
+      const parenthesesRegex = /\(([^)]+)\)/g;
+      let match;
+      while ((match = parenthesesRegex.exec(pdfText)) !== null) {
+        const text = match[1];
+        // Filter out obvious non-text content
+        if (text.length > 2 && 
+            !text.match(/^[0-9\s\.]+$/) && 
+            !text.match(/^[^a-zA-ZÀ-ÿ]+$/) &&
+            text.match(/[a-zA-ZÀ-ÿ]/)) {
+          extractedText += text + ' ';
+        }
+      }
+    }
+    
+    // Method 3: Search for readable words in the raw content
+    if (extractedText.length < 50) {
+      console.log('Method 2 failed, trying method 3...');
+      
+      // Look for sequences of readable characters
+      const wordRegex = /[a-zA-ZÀ-ÿ]{3,}[\s\w\À-ÿ]*[a-zA-ZÀ-ÿ]/g;
+      const words = pdfText.match(wordRegex);
+      
+      if (words) {
+        // Filter and join meaningful words
+        const meaningfulWords = words.filter(word => 
+          word.length >= 3 && 
+          word.length <= 50 &&
+          !word.match(/^[^a-zA-ZÀ-ÿ]*$/)
+        );
+        
+        if (meaningfulWords.length > 5) {
+          extractedText = meaningfulWords.slice(0, 100).join(' ');
+        }
+      }
+    }
+    
+    // Clean up the extracted text
+    if (extractedText) {
+      extractedText = extractedText
+        .replace(/\\n/g, ' ')
+        .replace(/\\r/g, ' ')
+        .replace(/\\t/g, ' ')
+        .replace(/\s+/g, ' ')
         .trim();
       
-      if (cleanContent && cleanContent.length > 10) {
-        extractedText += cleanContent + ' ';
-      }
+      console.log('Successfully extracted text, length:', extractedText.length);
+      console.log('Text preview:', extractedText.substring(0, 200));
+      
+      return extractedText.substring(0, 3000);
     }
     
-    // Fallback: try to extract any readable text patterns
-    if (!extractedText || extractedText.length < 50) {
-      const textPatterns = pdfText.match(/[a-zA-Z][a-zA-ZÀ-ÿ\s]{10,}/g);
-      if (textPatterns) {
-        extractedText = textPatterns.join(' ').substring(0, 2000);
-      }
-    }
-    
-    // If still no content, return a message indicating the issue
-    if (!extractedText || extractedText.length < 30) {
-      return "Contenu PDF non lisible - le fichier pourrait être une image ou protégé. Veuillez utiliser un PDF avec du texte sélectionnable.";
-    }
-    
-    // Limit text length for processing
-    return extractedText.substring(0, 3000);
+    // If all methods fail, return a helpful message
+    return `PDF traité mais le contenu textuel n'est pas accessible. 
+           Le fichier pourrait être:
+           - Un PDF scanné (image) nécessitant un OCR
+           - Un PDF protégé par mot de passe
+           - Un PDF avec encodage spécial
+           
+           Veuillez essayer avec un PDF contenant du texte sélectionnable.`;
     
   } catch (error) {
     console.error('Error extracting PDF text:', error);
-    return "Erreur lors de l'extraction du texte PDF. Veuillez réessayer avec un autre fichier.";
+    return `Erreur lors de l'extraction du texte PDF: ${error.message}. 
+           Veuillez vérifier que le fichier est un PDF valide et non corrompu.`;
   }
 }
 
@@ -89,59 +166,47 @@ serve(async (req) => {
 
     // Extract actual text content from PDF
     const extractedContent = await extractTextFromPDF(uint8Array)
-    console.log('Extracted content length:', extractedContent.length)
-    console.log('Content preview:', extractedContent.substring(0, 200) + '...')
+    console.log('Final extracted content length:', extractedContent.length)
+    console.log('Final content preview:', extractedContent.substring(0, 300) + '...')
 
     // Estimate page count based on content and file size
     const estimatedPages = Math.max(1, Math.floor(fileSize / 50000))
     
     // Generate summary based on actual content
     let summary = '';
-    if (extractedContent.length > 100) {
+    if (extractedContent.length > 100 && !extractedContent.includes('Erreur') && !extractedContent.includes('PDF traité mais')) {
       // Take first few sentences as summary
       const sentences = extractedContent.split(/[.!?]+/).filter(s => s.trim().length > 10);
       summary = sentences.slice(0, 3).join('. ').substring(0, 300) + (sentences.length > 3 ? '...' : '');
     } else {
-      summary = "Document PDF traité. Contenu disponible pour la génération de quiz.";
+      summary = extractedContent.substring(0, 500);
     }
 
-    // Update the document record with processed information including actual content
+    // Update the document record with processed information
     const { error: updateError } = await supabaseClient
       .from('documents')
       .update({
         pages_count: estimatedPages,
-        content_summary: summary,
+        content_summary: extractedContent, // Store the full extracted content
         ocr_processed: true,
-        updated_at: new Date().toISOString(),
-        // Store the extracted content in a new column or use content_summary for full content
-        file_content: extractedContent // We'll need to add this column or use existing one
+        updated_at: new Date().toISOString()
       })
       .eq('id', documentId)
 
     if (updateError) {
       console.error('Update error:', updateError)
-      // Try updating without file_content if column doesn't exist
-      const { error: fallbackUpdateError } = await supabaseClient
-        .from('documents')
-        .update({
-          pages_count: estimatedPages,
-          content_summary: extractedContent.substring(0, 500), // Store content in summary for now
-          ocr_processed: true,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', documentId)
-
-      if (fallbackUpdateError) {
-        throw new Error(`Failed to update document: ${fallbackUpdateError.message}`)
-      }
+      throw new Error(`Failed to update document: ${updateError.message}`)
     }
+
+    console.log('Document updated successfully with extracted content')
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         pages_count: estimatedPages,
         summary,
-        content_length: extractedContent.length
+        content_length: extractedContent.length,
+        content_preview: extractedContent.substring(0, 200)
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

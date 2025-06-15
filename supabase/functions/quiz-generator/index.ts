@@ -32,62 +32,78 @@ serve(async (req) => {
       throw new Error(`Document not found: ${docError.message}`)
     }
 
-    // Utiliser le vrai contenu du PDF au lieu du contenu simulé
+    // Utiliser le vrai contenu du PDF
     let pdfContent = document.content_summary || '';
     
-    // Si le content_summary est trop court, essayer de récupérer plus de contenu
-    if (pdfContent.length < 100) {
-      pdfContent = `Document: ${document.title}. Contenu minimal détecté. Génération de questions basiques.`;
-    }
+    console.log('Document title:', document.title)
+    console.log('Content length:', pdfContent.length)
+    console.log('Content preview:', pdfContent.substring(0, 300))
+    
+    // Vérifier si le contenu est valide et exploitable
+    const isValidContent = pdfContent.length > 50 && 
+                          !pdfContent.includes('Erreur lors de') &&
+                          !pdfContent.includes('PDF traité mais') &&
+                          !pdfContent.match(/^[^a-zA-ZÀ-ÿ\s]+$/);
 
-    console.log('Using PDF content:', pdfContent.substring(0, 200) + '...')
+    if (!isValidContent) {
+      console.log('Invalid content detected, cannot generate meaningful quiz')
+      throw new Error(`Le contenu du PDF n'est pas exploitable pour générer un quiz. 
+                      Raison: ${pdfContent.length < 50 ? 'Contenu trop court' : 'Contenu illisible ou corrompu'}.
+                      Veuillez essayer avec un PDF contenant du texte sélectionnable.`)
+    }
 
     // Améliorer le prompt pour utiliser le vrai contenu
     const difficultyMap = {
-      'facile': 'questions simples et directes',
-      'moyen': 'questions de niveau intermédiaire avec analyse',
-      'difficile': 'questions complexes nécessitant une réflexion approfondie'
+      'facile': 'questions simples et directes basées sur les faits du document',
+      'moyen': 'questions de niveau intermédiaire nécessitant une compréhension du contenu',
+      'difficile': 'questions complexes nécessitant une analyse approfondie du contenu'
     };
 
     const typeMap = {
-      'qcm': 'questions à choix multiples avec 4 options',
-      'vrai-faux': 'questions vrai/faux avec justification',
-      'mixte': 'un mélange de questions QCM et vrai/faux'
+      'qcm': 'questions à choix multiples avec 4 options pertinentes',
+      'vrai-faux': 'questions vrai/faux avec justification basée sur le contenu',
+      'mixte': 'un mélange équilibré de questions QCM et vrai/faux'
     };
 
     const prompt = `
-Tu es un expert pédagogique. Génère exactement ${settings.questionCount || 5} questions basées UNIQUEMENT sur ce contenu PDF réel:
+Tu es un expert pédagogique spécialisé dans la création de quiz éducatifs. 
 
-CONTENU DU PDF:
-"${pdfContent}"
+CONTENU DU DOCUMENT À ANALYSER:
+"""
+${pdfContent}
+"""
 
 CONSIGNES STRICTES:
-- Crée des ${difficultyMap[settings.difficulty] || 'questions de niveau moyen'}
-- Type: ${typeMap[settings.questionType] || 'questions à choix multiples'}
-- Les questions DOIVENT être basées sur le contenu fourni ci-dessus
-- Ne pas inventer d'informations qui ne sont pas dans le contenu
-- Si le contenu est insuffisant, créer des questions sur ce qui est disponible
+1. Génère exactement ${settings.questionCount || 5} questions basées UNIQUEMENT sur le contenu ci-dessus
+2. Type de questions: ${typeMap[settings.questionType] || 'questions à choix multiples'}
+3. Niveau de difficulté: ${difficultyMap[settings.difficulty] || 'questions de niveau moyen'}
+4. Chaque question DOIT être directement extraite du contenu fourni
+5. Les réponses incorrectes doivent être plausibles mais clairement distinguables de la bonne réponse
+6. Les explications doivent citer des éléments précis du document
 
-Format de réponse JSON strict:
+FORMAT DE RÉPONSE JSON OBLIGATOIRE:
 {
   "questions": [
     {
       "id": "q1",
       "type": "${settings.questionType === 'mixte' ? 'qcm' : settings.questionType}",
-      "question": "Question basée sur le contenu PDF",
-      "options": ${settings.questionType === 'vrai-faux' ? '["Vrai", "Faux"]' : '["Option A", "Option B", "Option C", "Option D"]'},
+      "question": "Question précise basée sur le contenu du document",
+      "options": ${settings.questionType === 'vrai-faux' ? '["Vrai", "Faux"]' : '["Réponse correcte tirée du document", "Option plausible mais incorrecte", "Autre option incorrecte", "Dernière option incorrecte"]'},
       "correctAnswer": 0,
-      "explanation": "Explication basée sur le contenu du PDF"
+      "explanation": "Explication détaillée avec référence au contenu du document"
     }
   ]
 }
 
-IMPORTANT: Réponds UNIQUEMENT avec le JSON, sans texte supplémentaire.
+IMPORTANT: 
+- Réponds UNIQUEMENT avec le JSON valide, sans texte supplémentaire
+- Assure-toi que toutes les questions sont pertinentes au contenu fourni
+- Vérifie que les réponses sont cohérentes avec le document
 `
 
-    console.log('Sending prompt to Gemini...')
+    console.log('Sending improved prompt to Gemini with real PDF content...')
 
-    // Appel à l'API Gemini avec le vrai contenu
+    // Appel à l'API Gemini avec le contenu réel
     const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${Deno.env.get('GEMINI_API_KEY')}`, {
       method: 'POST',
       headers: {
@@ -100,9 +116,9 @@ IMPORTANT: Réponds UNIQUEMENT avec le JSON, sans texte supplémentaire.
           }]
         }],
         generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
+          temperature: 0.3, // Plus bas pour plus de cohérence
+          topK: 20,
+          topP: 0.8,
           maxOutputTokens: 2048,
         }
       })
@@ -118,7 +134,7 @@ IMPORTANT: Réponds UNIQUEMENT avec le JSON, sans texte supplémentaire.
     let quizData
     try {
       const generatedText = geminiData.candidates[0].content.parts[0].text
-      console.log('Generated text preview:', generatedText.substring(0, 200))
+      console.log('Generated text preview:', generatedText.substring(0, 300))
       
       // Nettoyer le texte et extraire le JSON
       const cleanedText = generatedText.replace(/```json\s*|\s*```/g, '').trim()
@@ -126,50 +142,22 @@ IMPORTANT: Réponds UNIQUEMENT avec le JSON, sans texte supplémentaire.
       
       if (jsonMatch) {
         quizData = JSON.parse(jsonMatch[0])
-        console.log('Successfully parsed quiz data')
+        console.log('Successfully parsed quiz data with', quizData.questions?.length || 0, 'questions')
+        
+        // Valider que les questions sont basées sur le contenu
+        if (quizData.questions && quizData.questions.length > 0) {
+          console.log('Quiz generation successful with real content-based questions')
+        } else {
+          throw new Error('No valid questions generated')
+        }
       } else {
         throw new Error('No valid JSON found in Gemini response')
       }
     } catch (parseError) {
       console.error('Error parsing Gemini response:', parseError)
-      
-      // Fallback avec des questions basées sur le contenu disponible
-      const fallbackQuestions = []
-      const questionCount = Math.min(settings.questionCount || 5, 3)
-      
-      for (let i = 0; i < questionCount; i++) {
-        if (settings.questionType === 'vrai-faux') {
-          fallbackQuestions.push({
-            id: `q${i + 1}`,
-            type: "vrai-faux",
-            question: `Selon le document "${document.title}", les informations présentées sont-elles exactes ?`,
-            options: ["Vrai", "Faux"],
-            correctAnswer: 0,
-            explanation: `Basé sur le contenu extrait: ${pdfContent.substring(0, 100)}...`
-          })
-        } else {
-          fallbackQuestions.push({
-            id: `q${i + 1}`,
-            type: "qcm",
-            question: `Quelle est l'information principale du document "${document.title}" ?`,
-            options: [
-              "Information extraite du document",
-              "Donnée non pertinente",
-              "Contenu hors sujet", 
-              "Information incorrecte"
-            ],
-            correctAnswer: 0,
-            explanation: `Basé sur le contenu: ${pdfContent.substring(0, 150)}...`
-          })
-        }
-      }
-      
-      quizData = { questions: fallbackQuestions }
-    }
-
-    // Valider que nous avons le bon nombre de questions
-    if (!quizData.questions || quizData.questions.length === 0) {
-      throw new Error('Aucune question générée')
+      throw new Error(`Impossible de générer un quiz cohérent à partir du contenu du PDF. 
+                      Le contenu pourrait être trop technique ou mal structuré. 
+                      Erreur technique: ${parseError.message}`)
     }
 
     // Sauvegarder le quiz en base
@@ -190,10 +178,14 @@ IMPORTANT: Réponds UNIQUEMENT avec le JSON, sans texte supplémentaire.
       throw new Error(`Failed to save quiz: ${quizError.message}`)
     }
 
-    console.log('Quiz generated successfully:', quiz.id, 'with', quizData.questions.length, 'questions')
+    console.log('Quiz generated successfully:', quiz.id, 'with', quizData.questions.length, 'content-based questions')
 
     return new Response(
-      JSON.stringify({ quiz, questions: quizData.questions }),
+      JSON.stringify({ 
+        quiz, 
+        questions: quizData.questions,
+        contentUsed: pdfContent.substring(0, 200) + '...'
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
