@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import FileUploadZone from '@/components/upload/FileUploadZone';
 import PDFPreview from '@/components/upload/PDFPreview';
 import { useDocuments } from '@/hooks/useDocuments';
-import { ArrowLeft, Upload, CheckCircle, Info } from 'lucide-react';
+import { ArrowLeft, Upload, CheckCircle, Info, Brain } from 'lucide-react';
 
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -92,6 +92,7 @@ const UploadPage = () => {
                   onFileSelect={handleFileSelect}
                   isUploading={uploadDocument.isPending}
                   uploadProgress={uploadProgress}
+                  isExtracting={uploadDocument.isPending}
                 />
               </CardContent>
             </Card>
@@ -118,8 +119,17 @@ const UploadPage = () => {
                     disabled={uploadDocument.isPending || !selectedFile}
                     className="w-full"
                   >
-                    <Upload className="h-4 w-4 mr-2" />
-                    {uploadDocument.isPending ? 'Upload en cours...' : 'Uploader le document'}
+                    {uploadDocument.isPending ? (
+                      <>
+                        <Brain className="h-4 w-4 mr-2 animate-pulse" />
+                        Analyse par IA en cours...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Uploader le document
+                      </>
+                    )}
                   </Button>
                 </CardContent>
               </Card>
@@ -128,15 +138,14 @@ const UploadPage = () => {
             {uploadSuccess && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Traitement en cours</CardTitle>
+                  <CardTitle>Traitement terminé</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Alert>
-                    <Info className="h-4 w-4" />
+                    <CheckCircle className="h-4 w-4" />
                     <AlertDescription>
-                      Votre document est en cours d'analyse par notre IA. 
-                      Cette étape peut prendre quelques minutes. 
-                      Vous pourrez générer un quiz une fois le traitement terminé.
+                      Votre document a été analysé avec succès par notre IA. 
+                      Le contenu textuel a été extrait et vous pouvez maintenant générer un quiz.
                     </AlertDescription>
                   </Alert>
                   

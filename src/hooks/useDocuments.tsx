@@ -1,13 +1,14 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { usePdfTextExtraction } from './usePdfTextExtraction';
 
 export const useDocuments = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { extractText } = usePdfTextExtraction();
 
   const {
     data: documents,
@@ -34,6 +35,9 @@ export const useDocuments = () => {
     mutationFn: async ({ file, title }: { file: File; title?: string }) => {
       if (!user) throw new Error('User not authenticated');
 
+      // Extract text using Genkit/Gemini
+      const extractedText = await extractText(file);
+
       // Upload file to storage
       const fileName = `${user.id}/${Date.now()}-${file.name}`;
       const { error: uploadError } = await supabase.storage
@@ -42,29 +46,25 @@ export const useDocuments = () => {
 
       if (uploadError) throw uploadError;
 
-      // Create document record
+      // Estimate page count based on file size
+      const estimatedPages = Math.max(1, Math.floor(file.size / 50000));
+
+      // Create document record with extracted content
       const { data, error: dbError } = await supabase
         .from('documents')
         .insert({
           user_id: user.id,
           title: title || file.name.replace('.pdf', ''),
           file_path: fileName,
-          file_size: file.size
+          file_size: file.size,
+          pages_count: estimatedPages,
+          content_summary: extractedText,
+          ocr_processed: true
         })
         .select()
         .single();
 
       if (dbError) throw dbError;
-
-      // Process PDF (call edge function)
-      const { error: processError } = await supabase.functions.invoke('process-pdf', {
-        body: { documentId: data.id, filePath: fileName }
-      });
-
-      if (processError) {
-        console.warn('PDF processing failed:', processError);
-        // Don't throw error as the document is still uploaded
-      }
 
       return data;
     },
@@ -72,7 +72,7 @@ export const useDocuments = () => {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
       toast({
         title: "Document uploadé",
-        description: "Votre document PDF a été uploadé avec succès.",
+        description: "Votre document PDF a été uploadé et analysé avec succès.",
       });
     },
     onError: (error: any) => {

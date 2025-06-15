@@ -1,7 +1,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileText, X } from 'lucide-react';
+import { Upload, FileText, X, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
@@ -10,9 +10,15 @@ interface FileUploadZoneProps {
   onFileSelect: (file: File) => void;
   isUploading?: boolean;
   uploadProgress?: number;
+  isExtracting?: boolean;
 }
 
-const FileUploadZone = ({ onFileSelect, isUploading = false, uploadProgress = 0 }: FileUploadZoneProps) => {
+const FileUploadZone = ({ 
+  onFileSelect, 
+  isUploading = false, 
+  uploadProgress = 0,
+  isExtracting = false 
+}: FileUploadZoneProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
 
@@ -86,7 +92,7 @@ const FileUploadZone = ({ onFileSelect, isUploading = false, uploadProgress = 0 
                 <p className="text-sm text-gray-500">{formatFileSize(selectedFile.size)}</p>
               </div>
             </div>
-            {!isUploading && (
+            {!isUploading && !isExtracting && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -97,6 +103,16 @@ const FileUploadZone = ({ onFileSelect, isUploading = false, uploadProgress = 0 
               </Button>
             )}
           </div>
+          
+          {isExtracting && (
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center space-x-2 text-sm">
+                <Brain className="h-4 w-4 text-blue-500 animate-pulse" />
+                <span>Extraction du texte par IA en cours...</span>
+              </div>
+              <Progress value={50} className="w-full" />
+            </div>
+          )}
           
           {isUploading && (
             <div className="space-y-2">
