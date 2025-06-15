@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
-import { Clock } from 'lucide-react'
+import { Clock, Timer as TimerIcon } from 'lucide-react'
 
 interface TimerProps {
   startTime: Date
@@ -38,8 +38,8 @@ const Timer = ({ startTime, onTimeUpdate, className = "" }: TimerProps) => {
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <Clock className="h-4 w-4" />
-      <span className="font-mono text-sm">
+      <TimerIcon className="h-4 w-4" />
+      <span className="font-mono text-sm font-medium">
         {formatTime(timeSpent)}
       </span>
     </div>

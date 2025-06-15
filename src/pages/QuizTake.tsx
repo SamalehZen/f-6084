@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -9,7 +10,8 @@ import QuizNavigation from '@/components/quiz/QuizNavigation'
 import Timer from '@/components/quiz/Timer'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Save } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { ArrowLeft, Save, Brain, Clock, Target, Trophy, Sparkles } from 'lucide-react'
 
 interface QuizQuestion {
   id: string
@@ -61,10 +63,13 @@ const QuizTake = () => {
 
   if (isLoading || !attemptData) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="relative container mx-auto px-4 py-8">
+          <div className="animate-pulse space-y-6">
+            <div className="h-20 bg-gradient-to-r from-muted/50 to-muted/30 rounded-2xl w-1/3"></div>
+            <div className="h-96 bg-gradient-to-br from-muted/50 to-muted/30 rounded-3xl backdrop-blur-sm"></div>
+          </div>
         </div>
       </div>
     )
@@ -72,13 +77,24 @@ const QuizTake = () => {
 
   if (!quiz) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <p className="text-muted-foreground">Quiz non trouvé</p>
-          <Button onClick={() => navigate('/dashboard')} className="mt-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour au tableau de bord
-          </Button>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="relative container mx-auto px-4 py-8">
+          <Card className="max-w-2xl mx-auto border-0 shadow-2xl bg-card/50 backdrop-blur-sm cosmic-glow">
+            <CardContent className="py-16">
+              <div className="text-center">
+                <div className="h-24 w-24 mx-auto rounded-3xl bg-gradient-to-br from-red-500/20 to-red-600/10 flex items-center justify-center mb-6">
+                  <Trophy className="h-12 w-12 text-red-600" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Quiz non trouvé</h3>
+                <p className="text-muted-foreground mb-6">Le quiz que vous recherchez n'existe pas ou n'est plus disponible.</p>
+                <Button onClick={() => navigate('/dashboard')} className="rounded-xl hover:scale-105 transition-all duration-300">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Retour au tableau de bord
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     )
@@ -127,40 +143,73 @@ const QuizTake = () => {
   const canGoNext = attemptData.currentQuestionIndex < questions.length - 1
   const isLastQuestion = attemptData.currentQuestionIndex === questions.length - 1
 
+  const getModeColor = (mode: string) => {
+    return mode === 'exam' 
+      ? 'from-red-500/20 to-red-600/10 border-red-200/30' 
+      : 'from-blue-500/20 to-blue-600/10 border-blue-200/30'
+  }
+
+  const getModeTextColor = (mode: string) => {
+    return mode === 'exam' ? 'text-red-700' : 'text-blue-700'
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      
       {/* Header */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
+      <div className="relative backdrop-blur-sm bg-card/30 border-b border-border/50">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <Button 
                 variant="ghost" 
                 onClick={() => navigate(`/quiz/${quizId}/start`)}
-                size="sm"
+                className="rounded-xl hover:bg-accent/50 hover:scale-105 transition-all duration-300"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Quitter
               </Button>
-              <h1 className="text-xl font-semibold">{quiz.title}</h1>
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center">
+                  <Brain className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    {quiz.title}
+                  </h1>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Sparkles className="h-4 w-4 text-purple-500" />
+                    <span className="text-sm text-muted-foreground">Quiz interactif</span>
+                  </div>
+                </div>
+              </div>
             </div>
             
-            <div className="flex items-center gap-4">
-              <Timer 
-                startTime={attemptData.startTime}
-                className="text-muted-foreground"
-              />
-              <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+            <div className="flex items-center gap-6">
+              <div className={`px-4 py-2 rounded-2xl bg-gradient-to-r ${getModeColor(mode)} border backdrop-blur-sm`}>
+                <div className="flex items-center gap-2">
+                  <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center">
+                    <Clock className="h-3 w-3 text-emerald-600" />
+                  </div>
+                  <Timer 
+                    startTime={attemptData.startTime}
+                    className={`font-mono font-medium ${getModeTextColor(mode)}`}
+                  />
+                </div>
+              </div>
+              <Badge className={`px-4 py-2 rounded-xl text-sm font-medium ${getModeTextColor(mode)} bg-gradient-to-r ${getModeColor(mode)} border`}>
+                <Target className="h-3 w-3 mr-2" />
                 Mode {mode === 'exam' ? 'Examen' : 'Apprentissage'}
-              </span>
+              </Badge>
             </div>
           </div>
         </div>
       </div>
 
       {/* Question Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="relative container mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto">
           {currentQuestion && (
             <QuestionDisplay
               question={currentQuestion}
@@ -174,7 +223,7 @@ const QuizTake = () => {
       </div>
 
       {/* Navigation Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t">
+      <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-card/80 border-t border-border/50">
         <div className="container mx-auto px-4">
           <QuizNavigation
             currentQuestion={attemptData.currentQuestionIndex}
