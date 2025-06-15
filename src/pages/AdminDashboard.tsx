@@ -145,7 +145,7 @@ const AdminDashboard = () => {
                         <h4 className="font-medium">{user.full_name || 'Nom non défini'}</h4>
                         <p className="text-sm text-muted-foreground">{user.email}</p>
                         <div className="flex space-x-2">
-                          {user.user_roles?.map((userRole) => (
+                          {user.user_roles && Array.isArray(user.user_roles) ? user.user_roles.map((userRole: any) => (
                             <div key={userRole.id} className="flex items-center space-x-2">
                               <Badge variant={getRoleBadgeVariant(userRole.role)}>
                                 {getRoleLabel(userRole.role)}
@@ -173,7 +173,7 @@ const AdminDashboard = () => {
                                 </AlertDialogContent>
                               </AlertDialog>
                             </div>
-                          ))}
+                          )) : null}
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">

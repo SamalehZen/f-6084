@@ -238,15 +238,155 @@ export type Database = {
           },
         ]
       }
+      usage_analytics: {
+        Row: {
+          average_completion_rate: number | null
+          average_success_rate: number | null
+          created_at: string | null
+          date: string
+          id: string
+          total_attempts: number | null
+          total_quizzes: number | null
+          total_users: number | null
+        }
+        Insert: {
+          average_completion_rate?: number | null
+          average_success_rate?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          total_attempts?: number | null
+          total_quizzes?: number | null
+          total_users?: number | null
+        }
+        Update: {
+          average_completion_rate?: number | null
+          average_success_rate?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          total_attempts?: number | null
+          total_quizzes?: number | null
+          total_users?: number | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      assign_user_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: {
+          id: string
+          user_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          assigned_at: string
+          assigned_by: string
+        }[]
+      }
+      calculate_daily_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      get_all_users_with_roles: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          email: string
+          full_name: string
+          role: string
+          subscription_plan: string
+          avatar_url: string
+          created_at: string
+          updated_at: string
+          user_roles: Json
+        }[]
+      }
+      get_usage_analytics: {
+        Args: { days_limit?: number }
+        Returns: {
+          id: string
+          date: string
+          total_users: number
+          total_quizzes: number
+          total_attempts: number
+          average_completion_rate: number
+          average_success_rate: number
+          created_at: string
+        }[]
+      }
+      get_user_primary_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      get_user_roles: {
+        Args: { _user_id: string }
+        Returns: {
+          id: string
+          user_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          assigned_at: string
+          assigned_by: string
+        }[]
+      }
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
+      remove_user_role: {
+        Args: { _role_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "student" | "teacher" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -361,6 +501,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["student", "teacher", "admin"],
+    },
   },
 } as const
