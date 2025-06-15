@@ -11,7 +11,11 @@ import {
   ArrowLeft,
   Brain,
   Download,
-  RefreshCw
+  RefreshCw,
+  Sparkles,
+  Zap,
+  Clock,
+  Target
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDocuments } from '@/hooks/useDocuments';
@@ -43,31 +47,37 @@ const Documents = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      <div className="relative max-w-7xl mx-auto p-8">
+        <div className="mb-8">
           <Button 
             variant="ghost" 
             onClick={() => navigate('/dashboard')}
-            className="mb-4"
+            className="mb-6 rounded-xl"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Retour au dashboard
           </Button>
           
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Mes Documents
-              </h1>
-              <p className="text-gray-600">
-                Gérez vos documents PDF et générez des quiz
-              </p>
+            <div className="flex items-center gap-4">
+              <div className="h-16 w-16 rounded-3xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center">
+                <FileText className="h-8 w-8 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent mb-2">
+                  Ma Bibliothèque
+                </h1>
+                <p className="text-muted-foreground text-lg">
+                  Gérez vos documents PDF et générez des quiz intelligents
+                </p>
+              </div>
             </div>
             
-            <Button asChild>
+            <Button asChild className="rounded-xl shadow-lg hover:shadow-xl transition-all duration-300" size="lg">
               <Link to="/upload">
-                <Upload className="h-4 w-4 mr-2" />
+                <Upload className="h-5 w-5 mr-2" />
                 Nouveau Document
               </Link>
             </Button>
@@ -75,72 +85,94 @@ const Documents = () => {
         </div>
 
         {isLoading ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
+              <Card key={i} className="border-0 shadow-xl bg-card/50 backdrop-blur-sm animate-pulse">
                 <CardHeader>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-6 bg-muted rounded w-3/4"></div>
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-20 bg-gray-200 rounded"></div>
+                  <div className="h-24 bg-muted rounded"></div>
                 </CardContent>
               </Card>
             ))}
           </div>
         ) : documents && documents.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {documents.map((document) => (
-              <Card key={document.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
+              <Card key={document.id} className="group border-0 shadow-xl bg-card/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 hover:scale-105 cosmic-glow">
+                <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{document.title}</CardTitle>
-                      <CardDescription className="mt-1">
-                        Uploadé le {formatDate(document.created_at)}
-                      </CardDescription>
+                    <div className="flex items-start gap-3 flex-1">
+                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center flex-shrink-0">
+                        <FileText className="h-6 w-6 text-purple-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg truncate">{document.title}</CardTitle>
+                        <CardDescription className="mt-1">
+                          {formatDate(document.created_at)}
+                        </CardDescription>
+                      </div>
                     </div>
-                    <Badge variant={document.ocr_processed ? "default" : "secondary"}>
-                      {document.ocr_processed ? "Traité" : "En cours"}
+                    <Badge 
+                      variant={document.ocr_processed ? "default" : "secondary"}
+                      className="rounded-full"
+                    >
+                      {document.ocr_processed ? (
+                        <><Zap className="w-3 h-3 mr-1" /> Traité</>
+                      ) : (
+                        <><Clock className="w-3 h-3 mr-1" /> En cours</>
+                      )}
                     </Badge>
                   </div>
                 </CardHeader>
                 
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Taille :</span>
-                      <span>{document.file_size ? formatFileSize(document.file_size) : 'N/A'}</span>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Target className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <span className="font-medium text-muted-foreground">Taille:</span>
+                        <p className="text-xs">{document.file_size ? formatFileSize(document.file_size) : 'N/A'}</p>
+                      </div>
                     </div>
                     {document.pages_count && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Pages :</span>
-                        <span>{document.pages_count}</span>
-                      </div>
-                    )}
-                    {document.content_summary && (
-                      <div className="text-sm">
-                        <p className="text-muted-foreground mb-1">Résumé :</p>
-                        <p className="text-xs bg-gray-50 p-2 rounded">
-                          {document.content_summary}
-                        </p>
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <span className="font-medium text-muted-foreground">Pages:</span>
+                          <p className="text-xs">{document.pages_count}</p>
+                        </div>
                       </div>
                     )}
                   </div>
+
+                  {document.content_summary && (
+                    <div className="p-3 rounded-xl bg-gradient-to-r from-muted/50 to-muted/20 border border-border/50">
+                      <p className="text-muted-foreground text-xs mb-1 font-medium">Résumé IA:</p>
+                      <p className="text-xs leading-relaxed">
+                        {document.content_summary.length > 120 
+                          ? `${document.content_summary.substring(0, 120)}...` 
+                          : document.content_summary
+                        }
+                      </p>
+                    </div>
+                  )}
                   
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 pt-2">
                     {document.ocr_processed ? (
                       <Button 
                         size="sm" 
-                        className="flex-1"
+                        className="flex-1 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
                         onClick={() => handleGenerateQuiz(document.id)}
                       >
                         <Brain className="h-4 w-4 mr-2" />
                         Générer Quiz
                       </Button>
                     ) : (
-                      <Button size="sm" variant="outline" className="flex-1" disabled>
-                        <RefreshCw className="h-4 w-4 mr-2" />
+                      <Button size="sm" variant="outline" className="flex-1 rounded-xl" disabled>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                         Traitement...
                       </Button>
                     )}
@@ -148,6 +180,7 @@ const Documents = () => {
                     <Button 
                       size="sm" 
                       variant="outline"
+                      className="rounded-xl border-destructive/20 text-destructive hover:bg-destructive hover:text-destructive-foreground"
                       onClick={() => deleteDocument.mutate(document.id)}
                       disabled={deleteDocument.isPending}
                     >
@@ -159,17 +192,19 @@ const Documents = () => {
             ))}
           </div>
         ) : (
-          <Card>
+          <Card className="border-0 shadow-2xl bg-card/50 backdrop-blur-sm cosmic-glow">
             <CardContent className="py-16">
               <div className="text-center">
-                <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-                <h3 className="text-lg font-medium mb-2">Aucun document</h3>
-                <p className="text-muted-foreground mb-6">
-                  Vous n'avez pas encore uploadé de documents PDF.
+                <div className="h-24 w-24 mx-auto rounded-3xl bg-gradient-to-br from-muted/50 to-muted/20 flex items-center justify-center mb-6">
+                  <FileText className="h-12 w-12 text-muted-foreground opacity-50" />
+                </div>
+                <h3 className="text-2xl font-bold mb-2">Aucun document</h3>
+                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                  Vous n'avez pas encore uploadé de documents PDF. Commencez par ajouter votre premier document pour créer des quiz intelligents.
                 </p>
-                <Button asChild>
+                <Button asChild className="rounded-xl shadow-lg hover:shadow-xl transition-all duration-300" size="lg">
                   <Link to="/upload">
-                    <Upload className="h-4 w-4 mr-2" />
+                    <Sparkles className="h-5 w-5 mr-2" />
                     Uploader votre premier document
                   </Link>
                 </Button>
