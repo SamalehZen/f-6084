@@ -97,7 +97,7 @@ export const useQuizAttempt = () => {
       if (error) throw error
       return data
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "Quiz terminé",
         description: "Vos réponses ont été sauvegardées avec succès.",
@@ -105,6 +105,7 @@ export const useQuizAttempt = () => {
       queryClient.invalidateQueries({ queryKey: ['quiz-attempts'] })
       setAttemptData(null)
       setIsStarted(false)
+      return data
     },
     onError: (error: any) => {
       toast({
@@ -115,13 +116,17 @@ export const useQuizAttempt = () => {
     }
   })
 
+  const saveAttempt = () => {
+    return saveAttemptMutation.mutateAsync()
+  }
+
   return {
     attemptData,
     isStarted,
     startAttempt,
     saveAnswer,
     goToQuestion,
-    saveAttempt: saveAttemptMutation.mutate,
+    saveAttempt,
     isSaving: saveAttemptMutation.isPending
   }
 }

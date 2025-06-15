@@ -63,8 +63,11 @@ export type Database = {
           concepts_mastered: Json | null
           concepts_to_improve: Json | null
           created_at: string | null
+          difficulty_level: string | null
           id: string
+          performance_by_topic: Json | null
           quiz_attempt_id: string
+          time_analysis: Json | null
         }
         Insert: {
           ai_suggestions?: string | null
@@ -72,8 +75,11 @@ export type Database = {
           concepts_mastered?: Json | null
           concepts_to_improve?: Json | null
           created_at?: string | null
+          difficulty_level?: string | null
           id?: string
+          performance_by_topic?: Json | null
           quiz_attempt_id: string
+          time_analysis?: Json | null
         }
         Update: {
           ai_suggestions?: string | null
@@ -81,8 +87,11 @@ export type Database = {
           concepts_mastered?: Json | null
           concepts_to_improve?: Json | null
           created_at?: string | null
+          difficulty_level?: string | null
           id?: string
+          performance_by_topic?: Json | null
           quiz_attempt_id?: string
+          time_analysis?: Json | null
         }
         Relationships: [
           {

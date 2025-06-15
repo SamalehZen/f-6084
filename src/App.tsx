@@ -1,97 +1,112 @@
+import React from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from '@/components/ui/toaster'
+import { useAuth } from '@/hooks/useAuth'
+import { AppLayout } from '@/layouts/AppLayout'
+import { Index } from '@/pages/Index'
+import { Auth } from '@/pages/Auth'
+import { Dashboard } from '@/pages/Dashboard'
+import { Upload } from '@/pages/Upload'
+import { QuizSettings } from '@/pages/QuizSettings'
+import { QuizPreview } from '@/pages/QuizPreview'
+import { QuizStart } from '@/pages/QuizStart'
+import { QuizTake } from '@/pages/QuizTake'
+import { QuizResults } from '@/pages/QuizResults'
+import { NotFound } from '@/pages/NotFound'
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import AppLayout from "@/components/layout/AppLayout";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import Upload from "./pages/Upload";
-import QuizSettings from "./pages/QuizSettings";
-import QuizPreview from "./pages/QuizPreview";
-import QuizStart from "./pages/QuizStart";
-import QuizTake from "./pages/QuizTake";
-import NotFound from "./pages/NotFound";
+const queryClient = new QueryClient()
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <div className="min-h-screen bg-background">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <AppLayout>
                     <Dashboard />
                   </AppLayout>
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/upload" 
+            <Route
+              path="/upload"
               element={
                 <ProtectedRoute>
-                  <Upload />
+                  <AppLayout>
+                    <Upload />
+                  </AppLayout>
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/quiz-settings/:documentId" 
+            <Route
+              path="/quiz/:quizId/settings"
               element={
                 <ProtectedRoute>
                   <AppLayout>
                     <QuizSettings />
                   </AppLayout>
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/quiz/:quizId/preview" 
+            <Route
+              path="/quiz/:quizId/preview"
               element={
                 <ProtectedRoute>
                   <AppLayout>
                     <QuizPreview />
                   </AppLayout>
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/quiz/:quizId/start" 
+            <Route
+              path="/quiz/:quizId/start"
               element={
                 <ProtectedRoute>
-                  <AppLayout>
-                    <QuizStart />
-                  </AppLayout>
+                  <QuizStart />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/quiz/:quizId/take" 
+            <Route
+              path="/quiz/:quizId/take"
               element={
                 <ProtectedRoute>
                   <QuizTake />
                 </ProtectedRoute>
-              } 
+              }
             />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route
+              path="/quiz/:quizId/results"
+              element={
+                <ProtectedRoute>
+                  <QuizResults />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+        </div>
+      </Router>
+      <Toaster />
+    </QueryClientProvider>
+  )
+}
 
-export default App;
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isLoggedIn } = useAuth()
+
+  if (!isLoggedIn) {
+    window.location.href = '/auth'
+    return null
+  }
+
+  return <>{children}</>
+}
+
+export default App

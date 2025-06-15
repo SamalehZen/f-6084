@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -110,9 +109,18 @@ const QuizTake = () => {
     }
   }
 
-  const handleFinish = () => {
-    saveAttempt()
-    navigate(`/quiz/${quizId}/results`)
+  const handleFinish = async () => {
+    try {
+      const result = await saveAttempt()
+      if (result?.id) {
+        navigate(`/quiz/${quizId}/results?attempt=${result.id}`)
+      } else {
+        navigate(`/quiz/${quizId}/results`)
+      }
+    } catch (error) {
+      console.error('Error saving attempt:', error)
+      navigate(`/quiz/${quizId}/results`)
+    }
   }
 
   const canGoPrevious = attemptData.currentQuestionIndex > 0
