@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Logo from './Logo';
-import { Menu, X, CircleDot, LayoutDashboard, DollarSign, Sun, Moon } from 'lucide-react';
+import { Menu, X, Upload, LayoutDashboard, DollarSign, Sun, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Switch } from '@/components/ui/switch';
@@ -10,10 +10,9 @@ import { Switch } from '@/components/ui/switch';
 const Header = () => {
   const [activePage, setActivePage] = useState('features');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false); // Default to light mode
+  const [isDarkMode, setIsDarkMode] = useState(false);
   
   useEffect(() => {
-    // Apply the theme to the document when it changes
     if (isDarkMode) {
       document.documentElement.classList.remove('light-mode');
       document.documentElement.classList.add('dark-mode');
@@ -68,7 +67,7 @@ const Header = () => {
                 )}
                 onClick={handleNavClick('features')}
               >
-                <CircleDot size={16} className="inline-block mr-1.5" /> Features
+                <Upload size={16} className="inline-block mr-1.5" /> Fonctionnalités
               </ToggleGroupItem>
               <ToggleGroupItem 
                 value="dashboard" 
@@ -78,7 +77,7 @@ const Header = () => {
                 )}
                 onClick={handleNavClick('dashboard')}
               >
-                <LayoutDashboard size={16} className="inline-block mr-1.5" /> Dashboard
+                <LayoutDashboard size={16} className="inline-block mr-1.5" /> Upload PDF
               </ToggleGroupItem>
               <ToggleGroupItem 
                 value="pricing" 
@@ -88,7 +87,7 @@ const Header = () => {
                 )}
                 onClick={handleNavClick('pricing')}
               >
-                <DollarSign size={16} className="inline-block mr-1.5" /> Pricing
+                <DollarSign size={16} className="inline-block mr-1.5" /> Tarifs
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
@@ -105,7 +104,7 @@ const Header = () => {
                 }`}
                 onClick={handleNavClick('features')}
               >
-                <CircleDot size={16} className="inline-block mr-1.5" /> Features
+                <Upload size={16} className="inline-block mr-1.5" /> Fonctionnalités
               </a>
               <a 
                 href="#dashboard" 
@@ -114,7 +113,7 @@ const Header = () => {
                 }`}
                 onClick={handleNavClick('dashboard')}
               >
-                <LayoutDashboard size={16} className="inline-block mr-1.5" /> Dashboard
+                <LayoutDashboard size={16} className="inline-block mr-1.5" /> Upload PDF
               </a>
               <a 
                 href="#pricing" 
@@ -123,12 +122,11 @@ const Header = () => {
                 }`}
                 onClick={handleNavClick('pricing')}
               >
-                <DollarSign size={16} className="inline-block mr-1.5" /> Pricing
+                <DollarSign size={16} className="inline-block mr-1.5" /> Tarifs
               </a>
               
-              {/* Add theme toggle for mobile */}
               <div className="flex items-center justify-between px-3 py-2">
-                <span className="text-sm text-muted-foreground">Theme</span>
+                <span className="text-sm text-muted-foreground">Thème</span>
                 <div className="flex items-center gap-2">
                   <Moon size={16} className={`${isDarkMode ? 'text-primary' : 'text-muted-foreground'}`} />
                   <Switch 
@@ -144,7 +142,6 @@ const Header = () => {
         )}
         
         <div className="hidden md:flex items-center gap-4">
-          {/* Theme toggle for desktop */}
           <div className="flex items-center gap-2 rounded-full px-3 py-2">
             <Moon size={18} className={`${isDarkMode ? 'text-primary' : 'text-muted-foreground'}`} />
             <Switch 
@@ -155,7 +152,7 @@ const Header = () => {
             <Sun size={18} className={`${!isDarkMode ? 'text-primary' : 'text-muted-foreground'}`} />
           </div>
           <div className="rounded-2xl">
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-muted">Log in</Button>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-muted">Se connecter</Button>
           </div>
         </div>
       </header>

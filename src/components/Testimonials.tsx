@@ -4,22 +4,22 @@ import React from 'react';
 const Testimonials = () => {
   const testimonials = [
     {
-      quote: "Our payment processing efficiency increased by 40% and transaction failures dropped to near zero. The automation features are game-changing.",
-      author: "Sarah Johnson",
-      position: "CFO at TechCorp",
-      avatar: "bg-cosmic-light/30"
+      quote: "Quiz PDF Pro a révolutionné ma façon de créer des évaluations. En 5 minutes, je transforme mes cours en quiz interactifs que mes étudiants adorent !",
+      author: "Marie Dubois",
+      position: "Professeure de Mathématiques, Lycée Henri IV",
+      avatar: "bg-primary/30"
     },
     {
-      quote: "The real-time analytics and fraud detection capabilities have saved us millions. We can spot issues before they become problems.",
-      author: "Michael Chen",
-      position: "Head of Risk at FinanceFlow",
-      avatar: "bg-cosmic-light/20"
+      quote: "L'analyse pédagogique de l'IA m'aide à identifier rapidement les concepts mal compris. Mes formations en entreprise sont maintenant beaucoup plus efficaces.",
+      author: "Jean-Pierre Martin",
+      position: "Formateur RH, Groupe Renault",
+      avatar: "bg-primary/20"
     },
     {
-      quote: "Compliance used to be a nightmare. Now our regulatory reporting is automated and we're always audit-ready.",
-      author: "Leila Rodriguez",
-      position: "Operations Director at GlobalPay",
-      avatar: "bg-cosmic-light/40"
+      quote: "Fini les heures passées à créer manuellement des quiz ! L'IA génère des questions pertinentes et variées. Un gain de temps énorme pour notre équipe pédagogique.",
+      author: "Sophie Lefebvre",
+      position: "Directrice Pédagogique, CNAM Paris",
+      avatar: "bg-primary/40"
     }
   ];
   
@@ -31,10 +31,10 @@ const Testimonials = () => {
       <div className="max-w-7xl mx-auto space-y-16 relative z-10">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-foreground">
-            Trusted by finance teams worldwide
+            Utilisé par des milliers d'enseignants et formateurs
           </h2>
           <p className="text-muted-foreground text-lg">
-            See how our platform transforms financial operations for businesses
+            Découvrez comment Quiz PDF Pro transforme l'éducation et la formation professionnelle
           </p>
         </div>
         

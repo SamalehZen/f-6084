@@ -1,57 +1,57 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 
 const Pricing = () => {
   const plans = [
     {
-      name: "Starter",
-      price: "Free",
-      description: "Perfect for small businesses starting their fintech journey",
+      name: "Free",
+      price: "0€",
+      description: "Parfait pour découvrir Quiz PDF Pro et créer vos premiers quiz",
       features: [
-        "Up to 100 transactions/month",
-        "Basic payment processing",
-        "Standard reporting",
-        "Email support",
-        "Basic fraud protection"
+        "3 quiz par mois",
+        "Import PDF simple",
+        "QCM uniquement", 
+        "Support communautaire",
+        "Thème clair/sombre"
       ],
-      buttonText: "Get Started",
+      buttonText: "Commencer gratuitement",
       buttonVariant: "outline",
       popular: false
     },
     {
-      name: "Professional",
-      price: "$99",
-      period: "per month",
-      description: "Ideal for growing businesses with higher transaction volumes",
+      name: "Pro",
+      price: "14€",
+      period: "par mois",
+      description: "Idéal pour les enseignants et formateurs avec des besoins réguliers",
       features: [
-        "Up to 10,000 transactions/month",
-        "Advanced payment processing",
-        "Real-time analytics",
-        "Multi-currency support",
-        "Advanced fraud protection",
-        "API access",
-        "Priority support"
+        "Quiz illimités",
+        "Tous types de questions",
+        "IA complète et avancée",
+        "Analyse pédagogique",
+        "Export PDF, CSV, JSON",
+        "Support prioritaire",
+        "Révisions intelligentes"
       ],
-      buttonText: "Start 14-day trial",
+      buttonText: "Essai gratuit 14 jours",
       buttonVariant: "default",
       popular: true
     },
     {
-      name: "Enterprise",
-      price: "Custom",
-      description: "For large organizations with complex financial operations",
+      name: "Équipe",
+      price: "49€",
+      period: "par mois",
+      description: "Pour les institutions et équipes pédagogiques collaboratives",
       features: [
-        "Unlimited transactions",
-        "Custom payment workflows",
-        "Advanced compliance tools",
-        "Dedicated infrastructure",
-        "White-label solutions",
-        "Dedicated account manager",
-        "24/7 premium support"
+        "Jusqu'à 10 utilisateurs",
+        "Analytics collaboratifs",
+        "Gestion des rôles avancée",
+        "Intégrations LMS",
+        "Branding personnalisé",
+        "Support dédié",
+        "Formation incluse"
       ],
-      buttonText: "Contact Sales",
+      buttonText: "Contacter l'équipe",
       buttonVariant: "outline",
       popular: false
     }
@@ -62,10 +62,10 @@ const Pricing = () => {
       <div className="max-w-7xl mx-auto space-y-16">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-foreground">
-            Transparent pricing for every stage
+            Des tarifs transparents pour chaque besoin
           </h2>
           <p className="text-muted-foreground text-lg">
-            Scale your financial operations with plans that grow with your business
+            Choisissez le plan qui correspond à vos objectifs pédagogiques et développez vos quiz avec l'IA
           </p>
         </div>
         
@@ -81,7 +81,7 @@ const Pricing = () => {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-primary-foreground text-sm rounded-full font-medium">
-                  Most Popular
+                  Plus populaire
                 </div>
               )}
               
@@ -126,7 +126,7 @@ const Pricing = () => {
         </div>
         
         <div className="text-center text-muted-foreground">
-          Have questions? <a href="#" className="text-primary hover:underline">Contact our sales team</a>
+          Des questions ? <a href="#" className="text-primary hover:underline">Contactez notre équipe pédagogique</a>
         </div>
       </div>
     </section>

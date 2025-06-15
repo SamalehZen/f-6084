@@ -1,58 +1,58 @@
 
 import React, { useState } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, Layers, Grid3x3, ListCheck, BookOpen, Star, LayoutDashboard } from "lucide-react";
+import { ChevronDown, Upload, Brain, BarChart, GraduationCap, Users, Settings } from "lucide-react";
 
 const Features = () => {
   const [openFeature, setOpenFeature] = useState<number | null>(null);
   
   const features = [
     {
-      title: "Payment Automation",
-      description: "Automate payment processing and reconciliation to reduce manual errors and improve efficiency.",
-      expandedDescription: "Set up automated payment workflows with custom approval chains. Schedule recurring payments, automate invoice processing, and create conditional rules for different transaction types. Reduce manual intervention and ensure compliance with financial regulations.",
+      title: "Import intelligent de PDF",
+      description: "Glisser-déposer, sélection de pages et OCR automatique pour tous types de documents.",
+      expandedDescription: "Importez facilement vos documents PDF avec notre interface intuitive. Sélectionnez les pages spécifiques à analyser, bénéficiez de l'OCR automatique pour les documents scannés, et obtenez un résumé IA du contenu pour optimiser la génération de quiz.",
       icon: (
-        <Layers size={24} className="text-cosmic-accent" />
+        <Upload size={24} className="text-primary" />
       )
     },
     {
-      title: "Real-time Analytics",
-      description: "Monitor financial performance with real-time dashboards and comprehensive reporting.",
-      expandedDescription: "Track key financial metrics with customizable dashboards. Monitor cash flow, payment volumes, and transaction success rates in real-time. Generate detailed reports for stakeholders and identify trends before they impact your business.",
+      title: "Génération IA de quiz",
+      description: "Créez automatiquement des quiz personnalisés avec différents types de questions et niveaux.",
+      expandedDescription: "Notre IA avancée génère automatiquement des questions variées : QCM, vrai/faux, texte à trous, et correspondance. Choisissez le niveau de difficulté, le nombre de questions, et personnalisez le style selon votre matière et votre public cible.",
       icon: (
-        <Grid3x3 size={24} className="text-cosmic-accent" />
+        <Brain size={24} className="text-primary" />
       )
     },
     {
-      title: "Risk Management",
-      description: "Advanced fraud detection and risk assessment tools to protect your business.",
-      expandedDescription: "Utilize machine learning algorithms to detect suspicious transactions and prevent fraud. Set up custom risk rules, monitor transaction patterns, and receive instant alerts for unusual activity. Protect your business with enterprise-grade security measures.",
+      title: "Analyse pédagogique",
+      description: "Détection des concepts-clés et analyse du taux de compréhension avec conseils IA.",
+      expandedDescription: "Analysez la performance des apprenants avec nos outils pédagogiques avancés. Détectez automatiquement les concepts-clés, évaluez le taux de compréhension, et recevez des conseils personnalisés de l'IA pour améliorer l'apprentissage.",
       icon: (
-        <LayoutDashboard size={24} className="text-cosmic-accent" />
+        <BarChart size={24} className="text-primary" />
       )
     },
     {
-      title: "Compliance Tools",
-      description: "Built-in compliance features to meet regulatory requirements effortlessly.",
-      expandedDescription: "Stay compliant with financial regulations across multiple jurisdictions. Automated KYC/AML checks, transaction monitoring, and regulatory reporting. Generate audit trails and maintain documentation to meet compliance standards.",
+      title: "Modes Examen & Apprentissage",
+      description: "Chronomètre, feedback personnalisé et révisions intelligentes après chaque test.",
+      expandedDescription: "Adaptez l'expérience selon vos besoins : mode examen avec chronomètre et évaluation stricte, ou mode apprentissage avec feedback immédiat et explications détaillées. Système de révisions intelligentes basé sur les résultats.",
       icon: (
-        <ListCheck size={24} className="text-cosmic-accent" />
+        <GraduationCap size={24} className="text-primary" />
       )
     },
     {
-      title: "Multi-currency Support",
-      description: "Process payments in multiple currencies with real-time exchange rates.",
-      expandedDescription: "Accept and process payments in over 150 currencies with competitive exchange rates. Automatic currency conversion, hedging tools, and multi-currency accounting. Expand your business globally with seamless international payment processing.",
+      title: "Gestion utilisateur & Auth",
+      description: "Authentification sécurisée avec rôles et suivi de progression personnalisé.",
+      expandedDescription: "Système d'authentification complet avec Supabase. Gestion des rôles (Admin, Étudiant, Enseignant), sauvegarde automatique des quiz et résultats, suivi détaillé de la progression avec tableaux de bord personnalisés.",
       icon: (
-        <Star size={24} className="text-cosmic-accent" />
+        <Users size={24} className="text-primary" />
       )
     },
     {
-      title: "API Integration",
-      description: "Powerful APIs for seamless integration with your existing financial systems.",
-      expandedDescription: "Connect with your ERP, accounting software, and banking systems through our comprehensive APIs. Real-time webhooks, detailed documentation, and SDKs for popular programming languages. Build custom integrations that fit your unique business needs.",
+      title: "Paramètres avancés",
+      description: "Thèmes, multi-langue, export et intégrations LMS pour une expérience complète.",
+      expandedDescription: "Personnalisez entièrement votre expérience : thème clair/sombre, interface multi-langue, export des quiz en PDF/CSV/JSON, et intégrations LMS via Zapier, webhooks ou API pour une utilisation professionnelle.",
       icon: (
-        <BookOpen size={24} className="text-cosmic-accent" />
+        <Settings size={24} className="text-primary" />
       )
     }
   ];
@@ -66,10 +66,10 @@ const Features = () => {
       <div className="max-w-7xl mx-auto space-y-12">
         <div className="text-center space-y-3 max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-medium tracking-tighter">
-            Everything your business needs
+            Tout ce dont vous avez besoin pour créer des quiz intelligents
           </h2>
-          <p className="text-cosmic-muted text-lg">
-            Comprehensive fintech solutions to streamline your financial operations and drive growth
+          <p className="text-muted-foreground text-lg">
+            Des fonctionnalités IA avancées pour transformer vos documents en expériences d'apprentissage interactives
           </p>
         </div>
         
@@ -79,28 +79,28 @@ const Features = () => {
               key={index}
               open={openFeature === index}
               onOpenChange={() => toggleFeature(index)}
-              className={`rounded-xl border ${openFeature === index ? 'border-cosmic-light/40' : 'border-cosmic-light/20'} cosmic-gradient transition-all duration-300`}
+              className={`rounded-xl border ${openFeature === index ? 'border-primary/40' : 'border-border'} cosmic-gradient transition-all duration-300`}
             >
               <CollapsibleTrigger className="w-full text-left p-6 flex flex-col">
                 <div className="flex justify-between items-start">
-                  <div className="h-16 w-16 rounded-full bg-cosmic-light/10 flex items-center justify-center mb-6">
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
                     {feature.icon}
                   </div>
                   <ChevronDown
-                    className={`h-5 w-5 text-cosmic-muted transition-transform duration-200 ${
+                    className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
                       openFeature === index ? 'rotate-180' : ''
                     }`}
                   />
                 </div>
                 <h3 className="text-xl font-medium tracking-tighter mb-3">{feature.title}</h3>
-                <p className="text-cosmic-muted">{feature.description}</p>
+                <p className="text-muted-foreground">{feature.description}</p>
               </CollapsibleTrigger>
               <CollapsibleContent className="px-6 pb-6 pt-2">
-                <div className="pt-3 border-t border-cosmic-light/10">
-                  <p className="text-cosmic-muted">{feature.expandedDescription}</p>
+                <div className="pt-3 border-t border-border/10">
+                  <p className="text-muted-foreground">{feature.expandedDescription}</p>
                   <div className="mt-4 flex justify-end">
-                    <button className="text-cosmic-accent hover:text-cosmic-accent/80 text-sm font-medium">
-                      Learn more →
+                    <button className="text-primary hover:text-primary/80 text-sm font-medium">
+                      En savoir plus →
                     </button>
                   </div>
                 </div>

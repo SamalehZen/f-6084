@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="md:col-span-2 space-y-6">
             <Logo />
             <p className="text-muted-foreground max-w-xs">
-              Modern task management for teams that value clarity, focus, and results.
+              Quiz PDF Pro - Transformez vos documents en expériences d'apprentissage interactives avec l'intelligence artificielle.
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
@@ -40,44 +40,44 @@ const Footer = () => {
           </div>
           
           <div className="space-y-4">
-            <h4 className="font-medium text-lg text-foreground">Product</h4>
+            <h4 className="font-medium text-lg text-foreground">Produit</h4>
             <ul className="space-y-3">
-              <li><a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Integrations</a></li>
-              <li><a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Updates</a></li>
+              <li><a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Fonctionnalités</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Intégrations</a></li>
+              <li><a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Tarifs</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Nouveautés</a></li>
               <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Roadmap</a></li>
             </ul>
           </div>
           
           <div className="space-y-4">
-            <h4 className="font-medium text-lg text-foreground">Company</h4>
+            <h4 className="font-medium text-lg text-foreground">Éducation</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">About</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Blog</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Careers</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Press</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Contact</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Pour les enseignants</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Pour les formateurs</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Pour les institutions</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Études de cas</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Blog pédagogique</a></li>
             </ul>
           </div>
           
           <div className="space-y-4">
-            <h4 className="font-medium text-lg text-foreground">Resources</h4>
+            <h4 className="font-medium text-lg text-foreground">Support</h4>
             <ul className="space-y-3">
               <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Documentation</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Guides & Tutorials</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Centre d'aide</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Guides & Tutoriels</a></li>
               <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">API Reference</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Community</a></li>
+              <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Communauté</a></li>
             </ul>
           </div>
         </div>
         
         <div className="mt-16 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center text-muted-foreground text-sm">
-          <div>© 2025 Cosmos Tasks. All rights reserved.</div>
+          <div>© 2025 Quiz PDF Pro. Tous droits réservés.</div>
           <div className="flex gap-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
+            <a href="#" className="hover:text-foreground transition-colors">Confidentialité</a>
+            <a href="#" className="hover:text-foreground transition-colors">Conditions</a>
             <a href="#" className="hover:text-foreground transition-colors">Cookies</a>
           </div>
         </div>
