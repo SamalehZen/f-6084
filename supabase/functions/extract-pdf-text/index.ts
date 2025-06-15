@@ -1,5 +1,4 @@
 
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -25,7 +24,7 @@ serve(async (req) => {
 
     console.log('Starting PDF text extraction with Gemini...');
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -100,4 +99,3 @@ Analyse ce document PDF et extrait tout son contenu textuel:`
     });
   }
 });
-
