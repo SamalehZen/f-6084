@@ -11,6 +11,8 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload";
+import QuizSettings from "./pages/QuizSettings";
+import QuizPreview from "./pages/QuizPreview";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +42,26 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Upload />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/quiz-settings/:documentId" 
+              element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <QuizSettings />
+                  </AppLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/quiz/:quizId/preview" 
+              element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <QuizPreview />
+                  </AppLayout>
                 </ProtectedRoute>
               } 
             />
