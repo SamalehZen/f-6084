@@ -21,7 +21,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Récupérer le document
+    // Récupérer le document avec son contenu
     const { data: document, error: docError } = await supabaseClient
       .from('documents')
       .select('*')
@@ -32,42 +32,62 @@ serve(async (req) => {
       throw new Error(`Document not found: ${docError.message}`)
     }
 
-    // Récupérer le contenu du fichier PDF (simulé pour le moment)
-    const pdfContent = `Contenu du document: ${document.title}. Ce document contient des informations importantes sur le sujet traité.`
+    // Utiliser le vrai contenu du PDF au lieu du contenu simulé
+    let pdfContent = document.content_summary || '';
+    
+    // Si le content_summary est trop court, essayer de récupérer plus de contenu
+    if (pdfContent.length < 100) {
+      pdfContent = `Document: ${document.title}. Contenu minimal détecté. Génération de questions basiques.`;
+    }
 
-    // Préparer le prompt pour Gemini
+    console.log('Using PDF content:', pdfContent.substring(0, 200) + '...')
+
+    // Améliorer le prompt pour utiliser le vrai contenu
+    const difficultyMap = {
+      'facile': 'questions simples et directes',
+      'moyen': 'questions de niveau intermédiaire avec analyse',
+      'difficile': 'questions complexes nécessitant une réflexion approfondie'
+    };
+
+    const typeMap = {
+      'qcm': 'questions à choix multiples avec 4 options',
+      'vrai-faux': 'questions vrai/faux avec justification',
+      'mixte': 'un mélange de questions QCM et vrai/faux'
+    };
+
     const prompt = `
-Génère un quiz de ${settings.questionCount || 5} questions basé sur ce contenu PDF:
+Tu es un expert pédagogique. Génère exactement ${settings.questionCount || 5} questions basées UNIQUEMENT sur ce contenu PDF réel:
 
-${pdfContent}
+CONTENU DU PDF:
+"${pdfContent}"
 
-Paramètres:
-- Difficulté: ${settings.difficulty || 'moyen'}
-- Type de questions: ${settings.questionType || 'qcm'}
-- Langue: français
+CONSIGNES STRICTES:
+- Crée des ${difficultyMap[settings.difficulty] || 'questions de niveau moyen'}
+- Type: ${typeMap[settings.questionType] || 'questions à choix multiples'}
+- Les questions DOIVENT être basées sur le contenu fourni ci-dessus
+- Ne pas inventer d'informations qui ne sont pas dans le contenu
+- Si le contenu est insuffisant, créer des questions sur ce qui est disponible
 
-Format de réponse JSON:
+Format de réponse JSON strict:
 {
   "questions": [
     {
       "id": "q1",
-      "type": "qcm",
-      "question": "Question text",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "type": "${settings.questionType === 'mixte' ? 'qcm' : settings.questionType}",
+      "question": "Question basée sur le contenu PDF",
+      "options": ${settings.questionType === 'vrai-faux' ? '["Vrai", "Faux"]' : '["Option A", "Option B", "Option C", "Option D"]'},
       "correctAnswer": 0,
-      "explanation": "Explication de la réponse"
+      "explanation": "Explication basée sur le contenu du PDF"
     }
   ]
 }
 
-Assure-toi que:
-- Les questions sont pertinentes au contenu
-- Les réponses sont claires et précises
-- Une seule réponse correcte par question QCM
-- Inclus une explication pour chaque réponse
+IMPORTANT: Réponds UNIQUEMENT avec le JSON, sans texte supplémentaire.
 `
 
-    // Appel à l'API Gemini
+    console.log('Sending prompt to Gemini...')
+
+    // Appel à l'API Gemini avec le vrai contenu
     const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${Deno.env.get('GEMINI_API_KEY')}`, {
       method: 'POST',
       headers: {
@@ -93,33 +113,63 @@ Assure-toi que:
     }
 
     const geminiData = await geminiResponse.json()
-    console.log('Gemini response:', geminiData)
+    console.log('Gemini response received')
 
     let quizData
     try {
       const generatedText = geminiData.candidates[0].content.parts[0].text
-      // Extraire le JSON de la réponse
-      const jsonMatch = generatedText.match(/\{[\s\S]*\}/)
+      console.log('Generated text preview:', generatedText.substring(0, 200))
+      
+      // Nettoyer le texte et extraire le JSON
+      const cleanedText = generatedText.replace(/```json\s*|\s*```/g, '').trim()
+      const jsonMatch = cleanedText.match(/\{[\s\S]*\}/)
+      
       if (jsonMatch) {
         quizData = JSON.parse(jsonMatch[0])
+        console.log('Successfully parsed quiz data')
       } else {
         throw new Error('No valid JSON found in Gemini response')
       }
     } catch (parseError) {
       console.error('Error parsing Gemini response:', parseError)
-      // Fallback avec des questions par défaut
-      quizData = {
-        questions: [
-          {
-            id: "q1",
-            type: "qcm",
-            question: `Question générée à partir du document "${document.title}"`,
-            options: ["Option A", "Option B", "Option C", "Option D"],
+      
+      // Fallback avec des questions basées sur le contenu disponible
+      const fallbackQuestions = []
+      const questionCount = Math.min(settings.questionCount || 5, 3)
+      
+      for (let i = 0; i < questionCount; i++) {
+        if (settings.questionType === 'vrai-faux') {
+          fallbackQuestions.push({
+            id: `q${i + 1}`,
+            type: "vrai-faux",
+            question: `Selon le document "${document.title}", les informations présentées sont-elles exactes ?`,
+            options: ["Vrai", "Faux"],
             correctAnswer: 0,
-            explanation: "Ceci est une question d'exemple générée automatiquement."
-          }
-        ]
+            explanation: `Basé sur le contenu extrait: ${pdfContent.substring(0, 100)}...`
+          })
+        } else {
+          fallbackQuestions.push({
+            id: `q${i + 1}`,
+            type: "qcm",
+            question: `Quelle est l'information principale du document "${document.title}" ?`,
+            options: [
+              "Information extraite du document",
+              "Donnée non pertinente",
+              "Contenu hors sujet", 
+              "Information incorrecte"
+            ],
+            correctAnswer: 0,
+            explanation: `Basé sur le contenu: ${pdfContent.substring(0, 150)}...`
+          })
+        }
       }
+      
+      quizData = { questions: fallbackQuestions }
+    }
+
+    // Valider que nous avons le bon nombre de questions
+    if (!quizData.questions || quizData.questions.length === 0) {
+      throw new Error('Aucune question générée')
     }
 
     // Sauvegarder le quiz en base
@@ -140,7 +190,7 @@ Assure-toi que:
       throw new Error(`Failed to save quiz: ${quizError.message}`)
     }
 
-    console.log('Quiz generated successfully:', quiz.id)
+    console.log('Quiz generated successfully:', quiz.id, 'with', quizData.questions.length, 'questions')
 
     return new Response(
       JSON.stringify({ quiz, questions: quizData.questions }),
