@@ -1,38 +1,19 @@
 
 import { definePrompt } from '@genkit-ai/ai';
+import { z } from 'zod';
 
 export const extractTextFromPdfPrompt = definePrompt(
   {
     name: 'extractTextFromPdf',
     description: 'Extract text content from a PDF document',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        pdfDataUri: {
-          type: 'string',
-          description: 'PDF file as data URI (base64 encoded)'
-        }
-      },
-      required: ['pdfDataUri']
-    },
-    outputSchema: {
-      type: 'object',
-      properties: {
-        extractedText: {
-          type: 'string',
-          description: 'The extracted text content from the PDF'
-        },
-        success: {
-          type: 'boolean',
-          description: 'Whether the extraction was successful'
-        },
-        error: {
-          type: 'string',
-          description: 'Error message if extraction failed'
-        }
-      },
-      required: ['extractedText', 'success']
-    }
+    inputSchema: z.object({
+      pdfDataUri: z.string().describe('PDF file as data URI (base64 encoded)')
+    }),
+    outputSchema: z.object({
+      extractedText: z.string().describe('The extracted text content from the PDF'),
+      success: z.boolean().describe('Whether the extraction was successful'),
+      error: z.string().optional().describe('Error message if extraction failed')
+    })
   },
   `
 Tu es un expert en extraction de texte à partir de documents PDF.

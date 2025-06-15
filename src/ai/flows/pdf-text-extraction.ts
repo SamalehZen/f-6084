@@ -1,31 +1,21 @@
 
 import { defineFlow } from '@genkit-ai/flow';
 import { generate } from '@genkit-ai/ai';
+import { z } from 'zod';
 import { model } from '../genkit';
 import { extractTextFromPdfPrompt } from '../prompts/extract-text-prompt';
 
 export const extractTextFromPdf = defineFlow(
   {
     name: 'extractTextFromPdf',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        pdfDataUri: {
-          type: 'string',
-          description: 'PDF file as data URI'
-        }
-      },
-      required: ['pdfDataUri']
-    },
-    outputSchema: {
-      type: 'object',
-      properties: {
-        extractedText: { type: 'string' },
-        success: { type: 'boolean' },
-        error: { type: 'string' }
-      },
-      required: ['extractedText', 'success']
-    }
+    inputSchema: z.object({
+      pdfDataUri: z.string().describe('PDF file as data URI')
+    }),
+    outputSchema: z.object({
+      extractedText: z.string(),
+      success: z.boolean(),
+      error: z.string().optional()
+    })
   },
   async (input) => {
     try {

@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { runFlow } from '@genkit-ai/flow';
 import { extractTextFromPdf } from '@/ai/flows/pdf-text-extraction';
 
 export const usePdfTextExtraction = () => {
@@ -24,7 +25,7 @@ export const usePdfTextExtraction = () => {
       const pdfDataUri = await convertFileToDataUri(file);
       
       console.log('Extracting text with Genkit/Gemini...');
-      const result = await extractTextFromPdf({ pdfDataUri });
+      const result = await runFlow(extractTextFromPdf, { pdfDataUri });
       
       if (!result.success) {
         throw new Error(result.error || 'Failed to extract text');
