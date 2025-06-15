@@ -1,0 +1,52 @@
+
+/* Styles spécifiques pour l'impression */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  .print\\:block {
+    display: block !important;
+  }
+  
+  .print\\:text-black {
+    color: #000 !important;
+  }
+  
+  .print\\:bg-white {
+    background-color: #fff !important;
+  }
+  
+  /* Éviter les coupures de page dans les éléments importants */
+  .card, .chart-container {
+    break-inside: avoid;
+  }
+  
+  /* Ajuster les marges pour l'impression */
+  @page {
+    margin: 1in;
+  }
+  
+  /* Masquer les boutons et éléments interactifs */
+  button, .button, [role="button"] {
+    display: none !important;
+  }
+  
+  /* Afficher les couleurs de fond pour les badges */
+  .badge, .bg-green-100, .bg-yellow-100, .bg-red-100, .bg-blue-100, .bg-orange-100 {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
