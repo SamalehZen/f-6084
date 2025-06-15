@@ -1,11 +1,9 @@
 
-import { defineFlow } from '@genkit-ai/flow';
-import { generate } from '@genkit-ai/ai';
+import { ai, model } from '../genkit';
 import { z } from 'zod';
-import { model } from '../genkit';
 import { extractTextFromPdfPrompt } from '../prompts/extract-text-prompt';
 
-export const extractTextFromPdf = defineFlow(
+export const extractTextFromPdf = ai.defineFlow(
   {
     name: 'extractTextFromPdf',
     inputSchema: z.object({
@@ -21,7 +19,7 @@ export const extractTextFromPdf = defineFlow(
     try {
       console.log('Starting PDF text extraction with Genkit/Gemini...');
       
-      const response = await generate({
+      const response = await ai.generate({
         model,
         prompt: extractTextFromPdfPrompt,
         input: {

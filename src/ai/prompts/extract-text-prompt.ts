@@ -1,11 +1,10 @@
 
-import { definePrompt } from '@genkit-ai/ai';
+import { ai } from '../genkit';
 import { z } from 'zod';
 
-export const extractTextFromPdfPrompt = definePrompt(
+export const extractTextFromPdfPrompt = ai.definePrompt(
   {
     name: 'extractTextFromPdf',
-    description: 'Extract text content from a PDF document',
     inputSchema: z.object({
       pdfDataUri: z.string().describe('PDF file as data URI (base64 encoded)')
     }),
