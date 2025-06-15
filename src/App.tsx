@@ -14,6 +14,8 @@ import QuizPreview from '@/pages/QuizPreview'
 import QuizStart from '@/pages/QuizStart'
 import QuizTake from '@/pages/QuizTake'
 import QuizResults from '@/pages/QuizResults'
+import Profile from '@/pages/Profile'
+import AdminDashboard from '@/pages/AdminDashboard'
 import NotFound from '@/pages/NotFound'
 
 const queryClient = new QueryClient()
@@ -42,6 +44,26 @@ function App() {
                 <ProtectedRoute>
                   <AppLayout>
                     <Upload />
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Profile />
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AppLayout>
+                    <AdminDashboard />
                   </AppLayout>
                 </ProtectedRoute>
               }
@@ -99,13 +121,16 @@ function App() {
   )
 }
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedRoute = ({ children, requireAdmin = false }: { children: React.ReactNode, requireAdmin?: boolean }) => {
   const { user } = useAuth()
 
   if (!user) {
     window.location.href = '/auth'
     return null
   }
+
+  // Note: Pour l'instant, on ne vérifie pas le rôle admin côté route
+  // Cette vérification pourrait être ajoutée plus tard avec un hook useUserRoles
 
   return <>{children}</>
 }
