@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { ArrowLeft, Sparkles, FileText } from 'lucide-react'
 
 const QuizSettings = () => {
-  const { documentId } = useParams<{ documentId: string }>()
+  const { documentId, quizId } = useParams<{ documentId?: string; quizId?: string }>()
   const navigate = useNavigate()
   const { documents } = useDocuments()
   const { generateQuiz, isGenerating } = useQuizGeneration()
@@ -23,6 +23,8 @@ const QuizSettings = () => {
     questionType: 'qcm' as 'qcm' | 'vrai-faux' | 'mixte'
   })
 
+  // Get the document ID (either from documentId param or find it from quizId)
+  const currentDocumentId = documentId || (quizId ? 'quiz-document' : null)
   const document = documents?.find(doc => doc.id === documentId)
 
   const handleGenerate = async () => {
@@ -41,26 +43,29 @@ const QuizSettings = () => {
     }
   }
 
-  if (!document) {
+  if (documentId && !document) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <p className="text-muted-foreground">Document non trouvé</p>
-          <Button onClick={() => navigate('/dashboard')} className="mt-4">
+          <Button onClick={() => navigate('/documents')} className="mt-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour au tableau de bord
+            Retour aux documents
           </Button>
         </div>
       </div>
     )
   }
 
+  const pageTitle = documentId ? 'Générer un Quiz IA' : 'Paramètres du Quiz'
+  const documentTitle = document?.title || 'Document non trouvé'
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate(documentId ? '/documents' : '/dashboard')}
           className="mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -69,10 +74,10 @@ const QuizSettings = () => {
         
         <div className="flex items-center gap-3 mb-2">
           <FileText className="h-6 w-6 text-blue-600" />
-          <h1 className="text-2xl font-bold">Générer un Quiz IA</h1>
+          <h1 className="text-2xl font-bold">{pageTitle}</h1>
         </div>
         <p className="text-muted-foreground">
-          Document: {document.title}
+          Document: {documentTitle}
         </p>
       </div>
 
@@ -155,7 +160,7 @@ const QuizSettings = () => {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium text-muted-foreground">Document:</span>
-                <p className="truncate">{document.title}</p>
+                <p className="truncate">{documentTitle}</p>
               </div>
               <div>
                 <span className="font-medium text-muted-foreground">Questions:</span>
@@ -172,24 +177,30 @@ const QuizSettings = () => {
             </div>
 
             <div className="pt-4 border-t">
-              <Button 
-                onClick={handleGenerate}
-                disabled={isGenerating}
-                className="w-full"
-                size="lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4 animate-spin" />
-                    Génération en cours...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Générer le Quiz IA
-                  </>
-                )}
-              </Button>
+              {documentId ? (
+                <Button 
+                  onClick={handleGenerate}
+                  disabled={isGenerating}
+                  className="w-full"
+                  size="lg"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                      Génération en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Générer le Quiz IA
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center">
+                  Paramètres du quiz existant
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>

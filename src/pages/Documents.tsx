@@ -38,6 +38,10 @@ const Documents = () => {
     });
   };
 
+  const handleGenerateQuiz = (documentId: string) => {
+    navigate(`/document/${documentId}/quiz-settings`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto p-6">
@@ -126,7 +130,11 @@ const Documents = () => {
                   
                   <div className="flex gap-2">
                     {document.ocr_processed ? (
-                      <Button size="sm" className="flex-1" disabled>
+                      <Button 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleGenerateQuiz(document.id)}
+                      >
                         <Brain className="h-4 w-4 mr-2" />
                         Générer Quiz
                       </Button>

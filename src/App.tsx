@@ -80,6 +80,16 @@ function App() {
               }
             />
             <Route
+              path="/document/:documentId/quiz-settings"
+              element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <QuizSettings />
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/quiz/:quizId/settings"
               element={
                 <ProtectedRoute>
