@@ -5,14 +5,20 @@ import { z } from 'zod';
 export const extractTextFromPdfPrompt = ai.definePrompt(
   {
     name: 'extractTextFromPdf',
-    input: z.object({
-      pdfDataUri: z.string().describe('PDF file as data URI (base64 encoded)')
-    }),
-    output: z.object({
-      extractedText: z.string().describe('The extracted text content from the PDF'),
-      success: z.boolean().describe('Whether the extraction was successful'),
-      error: z.string().optional().describe('Error message if extraction failed')
-    })
+    model: 'googleai/gemini-2.0-flash-exp',
+    input: {
+      schema: z.object({
+        pdfDataUri: z.string().describe('PDF file as data URI (base64 encoded)')
+      })
+    },
+    output: {
+      format: 'json',
+      schema: z.object({
+        extractedText: z.string().describe('The extracted text content from the PDF'),
+        success: z.boolean().describe('Whether the extraction was successful'),
+        error: z.string().optional().describe('Error message if extraction failed')
+      })
+    }
   },
   `
 Tu es un expert en extraction de texte à partir de documents PDF.

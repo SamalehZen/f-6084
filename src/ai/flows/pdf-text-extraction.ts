@@ -23,7 +23,8 @@ export const extractTextFromPdf = ai.defineFlow(
         pdfDataUri: input.pdfDataUri
       });
 
-      const result = response;
+      // Extract the actual output data from the response
+      const result = response.output;
       console.log('PDF text extraction completed. Text length:', result.extractedText?.length || 0);
       
       if (!result.success || !result.extractedText) {
