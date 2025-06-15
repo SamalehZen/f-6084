@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronUp, CheckCircle, XCircle, Info, Eye } from 'lucide-react'
+import { ChevronDown, ChevronUp, CheckCircle, XCircle, Info, Eye, Clock } from 'lucide-react'
 
 interface QuizAnswer {
   questionIndex: number

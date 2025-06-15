@@ -1,8 +1,7 @@
-
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Brain, CheckCircle, AlertCircle, TrendingUp, Sparkles } from 'lucide-react'
+import { Brain, CheckCircle, AlertCircle, TrendingUp, Sparkles, Target } from 'lucide-react'
 
 interface AIAnalysisProps {
   analysis: any // From database
