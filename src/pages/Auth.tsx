@@ -9,19 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import Logo from '@/components/Logo';
-import RoleSelector from '@/components/auth/RoleSelector';
-
-type AppRole = 'student' | 'teacher';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [signupData, setSignupData] = useState({ 
-    email: '', 
-    password: '', 
-    fullName: '', 
-    role: 'student' as AppRole 
-  });
+  const [signupData, setSignupData] = useState({ email: '', password: '', fullName: '' });
   const { signIn, signUp, signInWithGoogle, user } = useAuth();
   const navigate = useNavigate();
 
@@ -48,7 +40,7 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    await signUp(signupData.email, signupData.password, signupData.fullName, signupData.role);
+    await signUp(signupData.email, signupData.password, signupData.fullName);
     
     setIsLoading(false);
   };
@@ -208,10 +200,6 @@ const Auth = () => {
                       minLength={6}
                     />
                   </div>
-                  <RoleSelector
-                    value={signupData.role}
-                    onChange={(role) => setSignupData({ ...signupData, role })}
-                  />
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'Inscription...' : "S'inscrire"}
                   </Button>
