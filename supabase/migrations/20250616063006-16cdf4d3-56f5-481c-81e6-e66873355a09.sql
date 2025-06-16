@@ -1,4 +1,5 @@
 
+
 -- Créer le type app_role s'il n'existe pas déjà
 DO $$ 
 BEGIN
@@ -63,3 +64,4 @@ BEGIN
           FOR SELECT USING (auth.uid() = user_id);
     END IF;
 END $$;
+
