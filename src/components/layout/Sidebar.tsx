@@ -12,7 +12,9 @@ import {
   User,
   Settings,
   LogOut,
-  Shield
+  Shield,
+  Crown,
+  Sparkles
 } from 'lucide-react'
 
 const Sidebar = () => {
@@ -53,18 +55,35 @@ const Sidebar = () => {
   }
 
   return (
-    <div className="flex h-full w-64 flex-col fixed inset-y-0 z-50 bg-background border-r">
-      <div className="flex h-16 items-center border-b px-4">
-        <Link to="/dashboard" className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">Q</span>
+    <div className="flex h-full w-64 flex-col fixed inset-y-0 z-50 bg-gradient-to-b from-card/95 to-card/90 backdrop-blur-xl border-r border-primary/20 shadow-2xl">
+      {/* Premium header */}
+      <div className="flex h-20 items-center border-b border-primary/20 px-6 bg-gradient-to-r from-card to-card/80 backdrop-blur-sm">
+        <Link to="/dashboard" className="flex items-center gap-3 group">
+          <div className="relative">
+            <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+              <span className="text-primary-foreground font-black text-lg group-hover:rotate-12 transition-transform duration-300">Q</span>
+            </div>
+            <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
+              <Crown className="h-2.5 w-2.5 text-white" />
+            </div>
           </div>
-          <span className="text-xl font-bold">QuizMaster</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-black tracking-tight text-foreground">
+              Quiz{" "}
+              <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+                Pro
+              </span>
+            </span>
+            <span className="text-xs font-bold text-primary uppercase tracking-wider">
+              Premium
+            </span>
+          </div>
         </Link>
       </div>
       
-      <ScrollArea className="flex-1 px-3 py-4">
-        <nav className="space-y-2">
+      {/* Premium navigation */}
+      <ScrollArea className="flex-1 px-4 py-6">
+        <nav className="space-y-3">
           {navigation.map((item) => {
             const Icon = item.icon
             const isActive = location.pathname === item.href
@@ -74,28 +93,46 @@ const Sidebar = () => {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  'flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105 relative overflow-hidden',
                   isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/30'
+                    : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
                 )}
               >
-                <Icon className="h-4 w-4" />
-                <span>{item.name}</span>
+                <div className={cn(
+                  'h-8 w-8 rounded-xl flex items-center justify-center transition-all duration-300',
+                  isActive 
+                    ? 'bg-primary-foreground/20' 
+                    : 'group-hover:bg-accent'
+                )}>
+                  <Icon className="h-4 w-4" />
+                </div>
+                <span className="relative">
+                  {item.name}
+                  {isActive && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary-foreground/50 rounded-full"></div>
+                  )}
+                </span>
+                {isActive && (
+                  <Sparkles className="h-3 w-3 text-primary-foreground/70 ml-auto animate-pulse" />
+                )}
               </Link>
             )
           })}
         </nav>
       </ScrollArea>
       
-      <div className="border-t p-4">
+      {/* Premium footer */}
+      <div className="border-t border-primary/20 p-4 bg-gradient-to-r from-card to-card/80 backdrop-blur-sm">
         <Button
           onClick={handleSignOut}
           variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:text-accent-foreground"
+          className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-2xl py-6 font-semibold transition-all duration-300 hover:scale-105 group"
         >
-          <LogOut className="h-4 w-4 mr-3" />
-          Déconnexion
+          <div className="h-8 w-8 rounded-xl bg-red-500/10 flex items-center justify-center mr-3 group-hover:bg-red-500/20 transition-colors">
+            <LogOut className="h-4 w-4 text-red-500" />
+          </div>
+          Déconnexion Elite
         </Button>
       </div>
     </div>
