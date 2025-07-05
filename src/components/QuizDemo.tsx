@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, FileText, Brain, CheckCircle2 } from 'lucide-react';
-import { ShineBorder } from '@/components/magicui/shine-border';
 
 const QuizDemo = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -74,10 +73,7 @@ const QuizDemo = () => {
   ];
 
   return (
-    <div className="h-full flex flex-col group relative">
-      {/* ShineBorder animation */}
-      <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
-      
+    <div className="h-full flex flex-col">
       {/* Steps Navigation */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-medium text-foreground">Création de Quiz</h3>
