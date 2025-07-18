@@ -137,10 +137,10 @@ function App() {
               />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <Toaster />
           </div>
         </Router>
       </AuthProvider>
-      <Toaster />
     </QueryClientProvider>
   )
 }
