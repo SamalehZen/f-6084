@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+
 
 type AppRole = 'student' | 'teacher';
 
@@ -22,7 +22,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
   useEffect(() => {
     // Set up auth state listener
@@ -50,13 +49,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       password,
     });
     
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur de connexion",
-        description: error.message,
-      });
-    }
+    // Note: Toast notifications will be handled at component level
+    // to avoid circular dependency issues
     
     return { error };
   };
@@ -76,18 +70,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       },
     });
     
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur d'inscription",
-        description: error.message,
-      });
-    } else {
-      toast({
-        title: "Inscription réussie",
-        description: "Vérifiez votre email pour confirmer votre compte.",
-      });
-    }
+    // Note: Toast notifications will be handled at component level
+    // to avoid circular dependency issues
     
     return { error };
   };
@@ -100,26 +84,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       },
     });
     
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur de connexion Google",
-        description: error.message,
-      });
-    }
+    // Note: Toast notifications will be handled at component level
+    // to avoid circular dependency issues
     
     return { error };
   };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur de déconnexion",
-        description: error.message,
-      });
-    }
+    // Note: Error handling will be done at component level
+    // to avoid circular dependency issues
   };
 
   return (
