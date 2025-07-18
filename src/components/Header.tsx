@@ -48,7 +48,7 @@ const Header = () => {
         {/* Premium CTA buttons */}
         <div className="flex items-center space-x-2 sm:space-x-4">
           {user ? (
-            <Button asChild className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/30 rounded-full px-4 sm:px-6 py-2 sm:py-3 font-semibold transition-all duration-300 hover:scale-105 text-sm">
+            <Button asChild className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/20 rounded-full px-4 sm:px-6 py-2 sm:py-3 font-semibold transition-all duration-200 hover:scale-[1.02] text-sm">
               <Link to="/dashboard" className="flex items-center gap-2">
                 <Crown className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">Dashboard VIP</span>
@@ -60,7 +60,7 @@ const Header = () => {
               <Button variant="ghost" asChild className="hidden sm:inline-flex text-muted-foreground hover:text-foreground font-semibold">
                 <Link to="/auth">Connexion</Link>
               </Button>
-              <Button asChild className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/30 rounded-full px-4 sm:px-6 py-2 sm:py-3 font-semibold transition-all duration-300 hover:scale-105 text-sm">
+              <Button asChild className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/20 rounded-full px-4 sm:px-6 py-2 sm:py-3 font-semibold transition-all duration-200 hover:scale-[1.02] text-sm">
                 <Link to="/auth" className="flex items-center gap-2">
                   <Star className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">Commencer Elite</span>

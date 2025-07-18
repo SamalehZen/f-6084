@@ -91,7 +91,7 @@ const Pricing = () => {
             <Trophy className="h-5 w-5 text-primary" />
           </div>
           
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-none">
             <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
               Investissez dans
             </span>
@@ -101,7 +101,7 @@ const Pricing = () => {
             </span>
           </h2>
           
-          <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light">
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-light max-w-4xl mx-auto">
             Choisissez le plan qui correspond à vos ambitions d'excellence pédagogique. 
             Chaque formule est conçue pour maximiser votre retour sur investissement.
           </p>
@@ -112,10 +112,10 @@ const Pricing = () => {
           {plans.map((plan, index) => (
             <div 
               key={index}
-              className={`group premium-pricing-card rounded-3xl border-2 ${plan.border} relative overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl ${
+              className={`group premium-pricing-card rounded-3xl border-2 ${plan.border} relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
                 plan.popular 
-                  ? "hover:shadow-primary/20 ring-2 ring-primary/20" 
-                  : "hover:shadow-black/10"
+                  ? "hover:shadow-primary/15 ring-2 ring-primary/20" 
+                  : "hover:shadow-black/5"
               }`}
             >
               {/* Premium background gradient */}
@@ -164,9 +164,9 @@ const Pricing = () => {
                 
                 {/* CTA Button */}
                 <Button 
-                  className={`w-full h-14 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 ${
+                  className={`w-full h-14 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-[1.02] ${
                     plan.buttonVariant === "default" 
-                      ? "bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground hover:shadow-xl hover:shadow-primary/30" 
+                      ? "bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground hover:shadow-xl hover:shadow-primary/20" 
                       : "border-2 border-primary/30 text-foreground hover:bg-primary/5 hover:border-primary/50 backdrop-blur-sm"
                   }`}
                   variant={plan.buttonVariant as "default" | "outline"}

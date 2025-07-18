@@ -130,18 +130,28 @@
     50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.2); }
   }
 
-  .animate-float { animation: float 6s ease-in-out infinite; }
-  .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+  .animate-float { 
+    animation: float 8s ease-in-out infinite; 
+    will-change: transform;
+  }
+  .animate-pulse-slow { 
+    animation: pulse-slow 6s ease-in-out infinite; 
+    will-change: opacity;
+  }
   .animate-gradient-shift { 
     background-size: 200% 200%;
-    animation: gradient-shift 8s ease infinite;
+    animation: gradient-shift 12s ease infinite;
+    will-change: background-position;
   }
-  .animate-glow { animation: glow 3s ease-in-out infinite; }
+  .animate-glow { 
+    animation: glow 4s ease-in-out infinite; 
+    will-change: box-shadow;
+  }
 
-  /* Animation delays */
-  .animation-delay-1000 { animation-delay: 1s; }
-  .animation-delay-2000 { animation-delay: 2s; }
-  .animation-delay-3000 { animation-delay: 3s; }
+  /* Optimized Animation delays */
+  .animation-delay-1000 { animation-delay: 1.5s; }
+  .animation-delay-2000 { animation-delay: 3s; }
+  .animation-delay-3000 { animation-delay: 4.5s; }
 
   /* Premium glass effects */
   .premium-glass-card {

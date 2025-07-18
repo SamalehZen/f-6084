@@ -78,7 +78,7 @@ const Features = () => {
             <Sparkles className="h-5 w-5 text-primary" />
           </div>
           
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-none">
             <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
               L'Excellence
             </span>
@@ -88,9 +88,9 @@ const Features = () => {
             </span>
           </h2>
           
-          <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light">
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-light max-w-4xl mx-auto">
             Découvrez une suite de fonctionnalités révolutionnaires conçues pour transformer 
-            l'éducation avec l'intelligence artificielle la plus avancée au monde.
+            l'éducation avec l'intelligence artificielle avancée.
           </p>
         </div>
         
@@ -101,7 +101,7 @@ const Features = () => {
               key={index}
               open={openFeature === index}
               onOpenChange={() => toggleFeature(index)}
-              className={`group premium-feature-card rounded-3xl border-2 ${openFeature === index ? feature.accent : 'border-border/40'} transition-all duration-500 hover:scale-105 hover:shadow-2xl overflow-hidden`}
+              className={`group premium-feature-card rounded-3xl border-2 ${openFeature === index ? feature.accent : 'border-border/40'} transition-all duration-300 hover:scale-[1.02] hover:shadow-xl overflow-hidden`}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-50 group-hover:opacity-70 transition-opacity duration-500`}></div>
               

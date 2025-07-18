@@ -52,12 +52,12 @@ const HeroSection: React.FC = () => {
         
         {/* Main title with premium typography */}
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none">
             <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
               Quiz PDF
             </span>
             <br />
-            <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent animate-gradient-shift">
+            <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
               Pro Elite
             </span>
           </h1>
@@ -69,20 +69,19 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
         
-        <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto text-balance leading-relaxed font-light">
-          Découvrez la nouvelle génération de création de quiz avec notre IA ultra-avancée. 
-          Transformez vos documents PDF en expériences d'apprentissage extraordinaires, 
-          conçues pour révolutionner l'éducation moderne.
+        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto text-balance leading-relaxed font-light">
+          Découvrez la nouvelle génération de création de quiz avec notre IA avancée. 
+          Transformez vos documents PDF en expériences d'apprentissage exceptionnelles.
         </p>
         
         {/* Premium CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 items-center">
-          <Button className="group relative bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground hover:shadow-2xl hover:shadow-primary/30 text-lg h-14 px-10 rounded-full font-semibold transition-all duration-500 hover:scale-105 overflow-hidden">
+          <Button className="group relative bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground hover:shadow-xl hover:shadow-primary/20 text-lg h-14 px-10 rounded-full font-semibold transition-all duration-300 hover:scale-[1.02] overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             <Crown className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
             Commencer l'Expérience VIP
           </Button>
-          <Button variant="outline" className="group border-2 border-primary/30 text-foreground hover:bg-primary/5 hover:border-primary/50 text-lg h-14 px-10 rounded-full font-semibold transition-all duration-300 hover:scale-105 backdrop-blur-sm">
+          <Button variant="outline" className="group border-2 border-primary/30 text-foreground hover:bg-primary/5 hover:border-primary/50 text-lg h-14 px-10 rounded-full font-semibold transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm">
             <Sparkles className="mr-2 h-5 w-5 group-hover:animate-spin transition-transform duration-300" />
             Découvrir la Démo Premium
           </Button>
