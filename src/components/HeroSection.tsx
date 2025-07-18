@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import QuizDemo from './QuizDemo';
 import { Brain, Sparkles, Star, Crown } from 'lucide-react';
-import { DotPattern } from '@/components/magicui/dot-pattern';
+import { Spotlight, GridBackground } from '@/components/magicui/spotlight-grid';
 
 const HeroSection = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -18,11 +18,9 @@ const HeroSection = () => {
 
   return (
     <section className="relative w-full py-20 md:py-32 px-6 md:px-12 flex flex-col items-center justify-center overflow-hidden">
-      {/* Premium dot pattern background */}
-      <DotPattern
-        glow={true}
-        className="[mask-image:radial-gradient(800px_circle_at_center,white,transparent)] opacity-60"
-      />
+      {/* Premium grid background with spotlight */}
+      <GridBackground />
+      <Spotlight />
       
       {/* Premium floating elements */}
       <div className="absolute inset-0 overflow-hidden">
