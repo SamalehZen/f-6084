@@ -22,7 +22,7 @@ import NotFound from '@/pages/NotFound'
 
 const queryClient = new QueryClient()
 
-function App() {
+const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

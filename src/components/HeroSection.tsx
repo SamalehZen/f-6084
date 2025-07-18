@@ -5,7 +5,7 @@ import QuizDemo from './QuizDemo';
 import { Brain, Sparkles, Star, Crown } from 'lucide-react';
 import { Spotlight, GridBackground } from '@/components/magicui/spotlight-grid';
 
-const HeroSection = () => {
+const HeroSection: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
