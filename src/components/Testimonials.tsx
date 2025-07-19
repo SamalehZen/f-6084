@@ -1,40 +1,34 @@
 
 import React from 'react';
 import { Crown, Star, Trophy, Award } from 'lucide-react';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  ContainerScroll, 
-  CardsContainer, 
-  CardTransformed, 
-  ReviewStars 
-} from '@/components/ui/animated-testimonials';
+import { AnimatedTestimonials } from '@/components/ui/animated-testimonials-carousel';
 
 const Testimonials = () => {
   const testimonials = [
     {
       quote: "Quiz PDF Pro Elite a révolutionné notre approche pédagogique. L'IA génère des évaluations d'une qualité exceptionnelle qui surpassent tout ce que nous avions imaginé. Une véritable révolution !",
-      author: "Dr. Marie Dubois",
-      position: "Directrice Pédagogique, Sciences Po Paris",
+      name: "Dr. Marie Dubois",
+      designation: "Directrice Pédagogique, Sciences Po Paris",
       rating: 5,
-      avatar: "bg-gradient-to-br from-purple-500/30 to-purple-600/20",
+      src: "/placeholder.svg",
       badge: "Utilisatrice VIP depuis 2023",
       achievement: <Trophy className="h-5 w-5 text-yellow-500" />
     },
     {
       quote: "L'analyse prédictive de l'IA nous permet d'anticiper les difficultés d'apprentissage avec une précision remarquable. Nos taux de réussite ont augmenté de 85% depuis l'adoption de cette solution premium.",
-      author: "Prof. Jean-Pierre Martin",
-      position: "Responsable Formation, Groupe Total",
+      name: "Prof. Jean-Pierre Martin",
+      designation: "Responsable Formation, Groupe Total",
       rating: 5,
-      avatar: "bg-gradient-to-br from-blue-500/30 to-blue-600/20",
+      src: "/placeholder.svg",
       badge: "Expert Enterprise",
       achievement: <Crown className="h-5 w-5 text-primary" />
     },
     {
       quote: "Une interface d'une élégance rare et des fonctionnalités qui dépassent nos attentes les plus élevées. Quiz PDF Pro Elite définit les nouveaux standards de l'excellence pédagogique digitale.",
-      author: "Sophie Lefebvre",
-      position: "Innovation Manager, CNAM International",
+      name: "Sophie Lefebvre",
+      designation: "Innovation Manager, CNAM International",
       rating: 5,
-      avatar: "bg-gradient-to-br from-green-500/30 to-green-600/20",
+      src: "/placeholder.svg",
       badge: "Innovatrice de l'Année",
       achievement: <Award className="h-5 w-5 text-green-500" />
     }
@@ -74,55 +68,12 @@ const Testimonials = () => {
           </p>
         </div>
         
-        {/* Animated testimonials stack */}
-        <ContainerScroll className="h-[800px]">
-          <CardsContainer className="h-[600px] w-full max-w-4xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <CardTransformed
-                key={index}
-                index={index}
-                arrayLength={testimonials.length}
-                incrementY={20}
-                incrementZ={20}
-                incrementRotation={index * 2}
-                variant="light"
-                className="w-full h-[400px]"
-              >
-                <div className="relative z-10 text-center">
-                  {/* Achievement Icon */}
-                  <div className="flex justify-center mb-6">
-                    {testimonial.achievement}
-                  </div>
-                  
-                  {/* Rating */}
-                  <ReviewStars rating={testimonial.rating} className="justify-center mb-6" />
-                  
-                  {/* Quote */}
-                  <blockquote className="text-lg leading-relaxed text-foreground/90 italic mb-8 font-light max-w-md">
-                    "{testimonial.quote}"
-                  </blockquote>
-                  
-                  {/* Author Info */}
-                  <div className="flex flex-col items-center gap-4">
-                    <Avatar className="h-16 w-16">
-                      <AvatarFallback className={`${testimonial.avatar} border-2 border-primary/30`}>
-                        <Crown className="h-6 w-6 text-primary" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="text-center">
-                      <h4 className="font-bold text-xl text-foreground mb-1">{testimonial.author}</h4>
-                      <p className="text-muted-foreground mb-3">{testimonial.position}</p>
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-                        <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
-                        <span className="text-xs font-medium text-primary">{testimonial.badge}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardTransformed>
-            ))}
-          </CardsContainer>
-        </ContainerScroll>
+        {/* Animated testimonials carousel */}
+        <AnimatedTestimonials 
+          testimonials={testimonials} 
+          autoplay={true}
+          className="bg-transparent"
+        />
         
         {/* Premium stats section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-16 border-t border-primary/20">
