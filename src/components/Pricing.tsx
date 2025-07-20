@@ -1,212 +1,275 @@
+"use client"
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Crown, Star, Sparkles, Trophy, Award, Diamond } from 'lucide-react';
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { ArrowRightIcon, CheckIcon } from "@radix-ui/react-icons"
+import { cn } from "@/lib/utils"
+import { Star, Zap, Crown, Shield } from 'lucide-react';
 
-const Pricing = () => {
-  const plans = [
-    {
-      name: "Découverte",
-      price: "0€",
-      description: "Parfait pour découvrir l'excellence Quiz PDF Pro et créer vos premiers chefs-d'œuvre pédagogiques",
-      features: [
-        "5 quiz premium par mois",
-        "IA basique incluse",
-        "QCM et Vrai/Faux", 
-        "Support communautaire",
-        "Interface moderne",
-        "Exports basiques"
-      ],
-      buttonText: "Commencer l'Aventure",
-      buttonVariant: "outline",
-      popular: false,
-      icon: <Star className="h-6 w-6" />,
-      gradient: "from-gray-500/10 to-gray-600/5",
-      border: "border-gray-500/20"
-    },
-    {
-      name: "Pro Elite",
-      price: "29€",
-      period: "par mois",
-      description: "La solution premium pour les professionnels exigeants qui recherchent l'excellence absolue",
-      features: [
-        "Quiz illimités premium",
-        "IA révolutionnaire complète",
-        "Tous types de questions elite",
-        "Analyse prédictive avancée",
-        "Exports premium (PDF, Excel, JSON)",
-        "Support prioritaire 24/7",
-        "Révisions intelligentes IA",
-        "Tableaux de bord avancés",
-        "Intégrations LMS premium"
-      ],
-      buttonText: "Essai VIP 30 Jours",
-      buttonVariant: "default",
-      popular: true,
-      icon: <Crown className="h-6 w-6" />,
-      gradient: "from-primary/20 to-primary/10",
-      border: "border-primary/40"
-    },
-    {
-      name: "Enterprise Platinum",
-      price: "99€",
-      period: "par mois",
-      description: "Solution ultra-premium pour les organisations d'élite et institutions prestigieuses",
-      features: [
-        "Utilisateurs illimités",
-        "IA quantique exclusive",
-        "Analytics prédictifs avancés",
-        "Gestion d'équipes enterprise",
-        "White-labeling complet",
-        "Intégrations sur-mesure",
-        "Support dédié premium",
-        "Formation executive incluse",
-        "SLA 99.9% garanti",
-        "Sécurité enterprise grade"
-      ],
-      buttonText: "Consultation VIP",
-      buttonVariant: "outline",
-      popular: false,
-      icon: <Diamond className="h-6 w-6" />,
-      gradient: "from-purple-500/20 to-purple-600/10",
-      border: "border-purple-500/30"
-    }
-  ];
-  
+interface Feature {
+  name: string
+  description: string
+  included: boolean
+}
+
+interface PricingTier {
+  name: string
+  price: {
+    monthly: number
+    yearly: number
+  }
+  description: string
+  features: Feature[]
+  highlight?: boolean
+  badge?: string
+  icon: React.ReactNode
+}
+
+const tiers: PricingTier[] = [
+  {
+    name: "Basic",
+    price: { monthly: 9, yearly: 90 },
+    description: "Parfait pour débuter avec l'IA",
+    features: [
+      { name: "5 quiz générés par mois", description: "Créez jusqu'à 5 quiz personnalisés", included: true },
+      { name: "Documents PDF jusqu'à 10 pages", description: "Support des petits documents", included: true },
+      { name: "Analyses de base", description: "Statistiques essentielles", included: true },
+      { name: "Support email", description: "Assistance par email", included: true }
+    ],
+    icon: <Shield className="w-6 h-6" />,
+    highlight: false
+  },
+  {
+    name: "Pro",
+    price: { monthly: 29, yearly: 290 },
+    description: "Pour les utilisateurs avancés",
+    features: [
+      { name: "50 quiz générés par mois", description: "Création intensive de quiz", included: true },
+      { name: "Documents PDF illimités", description: "Aucune limite de taille", included: true },
+      { name: "Analyses avancées avec IA", description: "Intelligence artificielle poussée", included: true },
+      { name: "Statistiques détaillées", description: "Rapports complets", included: true },
+      { name: "Support prioritaire", description: "Réponse rapide", included: true },
+      { name: "Export des résultats", description: "Exportation complète", included: true }
+    ],
+    icon: <Zap className="w-6 h-6" />,
+    highlight: true,
+    badge: "Populaire"
+  },
+  {
+    name: "Enterprise",
+    price: { monthly: 99, yearly: 990 },
+    description: "Solution complète pour équipes",
+    features: [
+      { name: "Quiz illimités", description: "Création sans limite", included: true },
+      { name: "Documents illimités", description: "Capacité maximale", included: true },
+      { name: "IA personnalisée", description: "Intelligence sur mesure", included: true },
+      { name: "Tableau de bord équipe", description: "Gestion collaborative", included: true },
+      { name: "Intégrations API", description: "Connexions externes", included: true },
+      { name: "Support dédié 24/7", description: "Assistance permanente", included: true },
+      { name: "Formation personnalisée", description: "Accompagnement complet", included: true }
+    ],
+    icon: <Crown className="w-6 h-6" />,
+    highlight: false
+  }
+];
+
+function PricingSection({ className }: { className?: string }) {
+  const [isYearly, setIsYearly] = useState(false)
+
+  const buttonStyles = {
+    default: cn(
+      "h-12 bg-background hover:bg-accent",
+      "text-foreground",
+      "border border-border hover:border-primary/30",
+      "shadow-sm hover:shadow-md",
+      "text-sm font-medium",
+    ),
+    highlight: cn(
+      "h-12 bg-primary hover:bg-primary/90",
+      "text-primary-foreground",
+      "shadow-lg hover:shadow-xl",
+      "font-semibold text-base",
+    ),
+  }
+
+  const badgeStyles = cn(
+    "px-4 py-1.5 text-sm font-medium",
+    "bg-primary text-primary-foreground",
+    "border-none shadow-lg",
+  )
+
   return (
-    <section id="pricing" className="w-full py-24 md:py-32 px-6 md:px-12 relative overflow-hidden">
-      {/* Premium background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-primary/5"></div>
-        <div className="absolute top-20 right-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse-slow animation-delay-2000"></div>
+    <section
+      className={cn(
+        "relative bg-gradient-to-br from-background via-background to-primary/5",
+        "py-20 px-4",
+        "overflow-hidden",
+        className,
+      )}
+    >
+      {/* Background decoration */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-1/4 left-1/3 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-primary/5 rounded-full blur-2xl animate-pulse-slow animation-delay-1000"></div>
       </div>
-      
-      <div className="max-w-7xl mx-auto space-y-20 relative z-10">
-        {/* Premium header */}
-        <div className="text-center space-y-8 max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 backdrop-blur-sm">
-            <Crown className="h-5 w-5 text-primary" />
-            <span className="text-sm font-bold text-primary uppercase tracking-wider">Tarification Premium Elite</span>
-            <Trophy className="h-5 w-5 text-primary" />
+
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="flex flex-col items-center gap-4 mb-16">
+          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-primary/10 rounded-full backdrop-blur-sm border border-primary/20">
+            <Star className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-primary">Tarifs transparents</span>
           </div>
-          
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-none">
-            <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-              Investissez dans
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
-              L'Excellence
-            </span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent text-center">
+            Choisissez votre plan
           </h2>
-          
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-light max-w-4xl mx-auto">
-            Choisissez le plan qui correspond à vos ambitions d'excellence pédagogique. 
-            Chaque formule est conçue pour maximiser votre retour sur investissement.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-center mb-8">
+            Des solutions adaptées à tous vos besoins, de l'utilisateur individuel aux grandes entreprises
           </p>
+          <div className="inline-flex items-center p-1.5 bg-card/80 rounded-full border border-border shadow-sm backdrop-blur-sm">
+            {["Mensuel", "Annuel"].map((period) => (
+              <button
+                key={period}
+                onClick={() => setIsYearly(period === "Annuel")}
+                className={cn(
+                  "px-8 py-2.5 text-sm font-medium rounded-full transition-all duration-300",
+                  (period === "Annuel") === isYearly
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {period}
+              </button>
+            ))}
+          </div>
         </div>
-        
-        {/* Premium pricing grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {plans.map((plan, index) => (
-            <div 
-              key={index}
-              className={`group premium-pricing-card rounded-3xl border-2 ${plan.border} relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
-                plan.popular 
-                  ? "hover:shadow-primary/15 ring-2 ring-primary/20" 
-                  : "hover:shadow-black/5"
-              }`}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {tiers.map((tier) => (
+            <div
+              key={tier.name}
+              className={cn(
+                "relative group backdrop-blur-sm will-change-transform",
+                "rounded-3xl transition-all duration-500",
+                "flex flex-col h-full",
+                tier.highlight
+                  ? "bg-gradient-to-br from-primary/5 to-primary/10 lg:-translate-y-4 hover:scale-105"
+                  : "bg-card/50 hover:scale-105",
+                "border",
+                tier.highlight
+                  ? "border-primary/30 shadow-xl"
+                  : "border-border/50 hover:border-primary/30 shadow-md",
+                "hover:shadow-lg",
+              )}
             >
-              {/* Premium background gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-60 group-hover:opacity-80 transition-opacity duration-500`}></div>
-              
-              {/* Popular badge */}
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                  <div className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm rounded-full font-bold shadow-lg">
-                    <Crown className="h-4 w-4" />
-                    <span>LE PLUS POPULAIRE</span>
-                    <Sparkles className="h-4 w-4" />
-                  </div>
+              {tier.badge && tier.highlight && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                  <Badge className={badgeStyles}>⭐ {tier.badge}</Badge>
                 </div>
               )}
-              
-              <div className="relative z-10 p-8 h-full flex flex-col">
-                {/* Plan header */}
-                <div className="text-center mb-8">
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className={`p-3 rounded-2xl bg-gradient-to-br ${plan.gradient} border ${plan.border}`}>
-                      {plan.icon}
-                    </div>
-                    <h3 className="text-2xl font-bold tracking-tight text-foreground">{plan.name}</h3>
+
+              <div className="p-8 flex-1">
+                <div className="flex items-center gap-4 mb-6">
+                  <div
+                    className={cn(
+                      "p-3 rounded-xl transition-all duration-300",
+                      tier.highlight
+                        ? "bg-primary/10 text-primary"
+                        : "bg-muted/50 text-muted-foreground",
+                    )}
+                  >
+                    {tier.icon}
                   </div>
-                  
-                  <div className="mb-4">
-                    <div className="text-4xl font-black tracking-tighter text-foreground">{plan.price}</div>
-                    {plan.period && <div className="text-sm text-muted-foreground font-medium">{plan.period}</div>}
-                  </div>
-                  
-                  <p className="text-muted-foreground leading-relaxed">{plan.description}</p>
+                  <h3 className="text-xl font-bold text-foreground">
+                    {tier.name}
+                  </h3>
                 </div>
-                
-                {/* Features list */}
-                <div className="space-y-4 mb-8 flex-1">
-                  {plan.features.map((feature, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center border border-primary/30 mt-0.5">
-                        <Star className="h-3 w-3 text-primary fill-current" />
+
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-foreground">
+                      €{isYearly ? tier.price.yearly : tier.price.monthly}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      /{isYearly ? "an" : "mois"}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {tier.description}
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  {tier.features.map((feature) => (
+                    <div key={feature.name} className="flex gap-3">
+                      <div
+                        className={cn(
+                          "mt-1 p-1 rounded-full transition-colors duration-200",
+                          feature.included
+                            ? "bg-primary/10 text-primary"
+                            : "bg-muted/50 text-muted-foreground",
+                        )}
+                      >
+                        <CheckIcon className="w-3 h-3" />
                       </div>
-                      <span className="text-sm text-foreground font-medium leading-relaxed">{feature}</span>
+                      <div>
+                        <div className="text-sm font-medium text-foreground">
+                          {feature.name}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {feature.description}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-                
-                {/* CTA Button */}
-                <Button 
-                  className={`w-full h-14 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-[1.02] ${
-                    plan.buttonVariant === "default" 
-                      ? "bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground hover:shadow-xl hover:shadow-primary/20" 
-                      : "border-2 border-primary/30 text-foreground hover:bg-primary/5 hover:border-primary/50 backdrop-blur-sm"
-                  }`}
-                  variant={plan.buttonVariant as "default" | "outline"}
-                >
-                  <div className="flex items-center gap-2">
-                    {plan.buttonVariant === "default" ? <Crown className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
-                    {plan.buttonText}
-                  </div>
-                </Button>
-                
-                {/* Premium guarantee */}
-                <div className="text-center mt-4">
-                  <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                    <Award className="h-3 w-3" />
-                    <span>Garantie Excellence 100%</span>
-                  </div>
-                </div>
               </div>
-              
-              {/* Premium shine effect */}
-              <div className="absolute inset-0 -top-4 -left-4 bg-gradient-to-r from-transparent via-white/10 to-transparent rotate-45 translate-x-[-100%] group-hover:translate-x-[300%] transition-transform duration-1000 ease-out"></div>
+
+              <div className="p-8 pt-0 mt-auto">
+                <Button
+                  className={cn(
+                    "w-full relative transition-all duration-300",
+                    tier.highlight
+                      ? buttonStyles.highlight
+                      : buttonStyles.default,
+                  )}
+                  size="lg"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {tier.highlight ? (
+                      <>
+                        Choisir Pro
+                        <ArrowRightIcon className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        Commencer
+                        <ArrowRightIcon className="w-4 h-4" />
+                      </>
+                    )}
+                  </span>
+                </Button>
+              </div>
             </div>
           ))}
         </div>
-        
-        {/* Premium footer */}
-        <div className="text-center space-y-6 pt-16 border-t border-primary/20">
-          <div className="inline-flex items-center gap-4 px-8 py-4 rounded-full bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/30 backdrop-blur-sm">
-            <Crown className="h-6 w-6 text-primary" />
-            <span className="text-lg font-bold text-foreground">Besoin d'une solution sur-mesure ?</span>
-            <Sparkles className="h-6 w-6 text-primary" />
-          </div>
-          <p className="text-muted-foreground">
-            Contactez notre équipe d'experts pour une{" "}
-            <a href="#" className="text-primary hover:underline font-semibold">consultation VIP personnalisée</a>
+
+        <div className="text-center p-8 rounded-2xl bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 backdrop-blur-sm">
+          <h3 className="text-xl font-semibold mb-2 text-foreground">Besoin d'une solution sur mesure ?</h3>
+          <p className="text-muted-foreground mb-4">
+            Contactez-nous pour une offre personnalisée adaptée à vos besoins spécifiques
           </p>
+          <Button variant="outline" className="hover:bg-primary hover:text-primary-foreground transition-colors">
+            Nous contacter
+          </Button>
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
+
+const Pricing = () => {
+  return <PricingSection />
+}
 
 export default Pricing;
