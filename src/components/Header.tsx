@@ -52,17 +52,17 @@ const Header = () => {
               </Button>
             ) : (
               <>
-                <Button variant="ghost" asChild>
-                  <Link to="/auth" className="text-muted-foreground hover:text-foreground font-semibold">
+                <Link to="/auth">
+                  <Button variant="ghost" className="text-muted-foreground hover:text-foreground font-semibold">
                     Connexion
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/auth" className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/20 rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] flex items-center gap-2">
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/20 rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] flex items-center gap-2">
                     <Star className="h-4 w-4" />
                     Commencer Elite
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </>
             )}
           </div>
@@ -77,19 +77,19 @@ const Header = () => {
             
             <div className="flex items-center space-x-2">
               {user ? (
-                <Button asChild size="sm">
-                  <Link to="/dashboard" className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 py-2 text-xs font-semibold rounded-xl flex items-center gap-1">
+                <Link to="/dashboard">
+                  <Button size="sm" className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 py-2 text-xs font-semibold rounded-xl flex items-center gap-1">
                     <Crown className="h-3 w-3" />
                     VIP
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               ) : (
-                <Button asChild size="sm">
-                  <Link to="/auth" className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 py-2 text-xs font-semibold rounded-xl flex items-center gap-1">
+                <Link to="/auth">
+                  <Button size="sm" className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 py-2 text-xs font-semibold rounded-xl flex items-center gap-1">
                     <Star className="h-3 w-3" />
                     Elite
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               )}
               
               <MobileNavToggle
@@ -118,17 +118,17 @@ const Header = () => {
             
             {!user && (
               <div className="w-full space-y-4 pt-4 border-t border-border/30">
-                <Button asChild variant="ghost" className="w-full justify-start">
-                  <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start">
                     Connexion
-                  </Link>
-                </Button>
-                <Button asChild className="w-full bg-gradient-to-r from-primary to-primary/80">
-                  <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                  </Button>
+                </Link>
+                <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                  <Button className="w-full bg-gradient-to-r from-primary to-primary/80">
                     <Star className="h-4 w-4" />
                     Commencer Elite
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </div>
             )}
           </MobileNavMenu>
