@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { ShineBorder } from '@/components/ui/shine-border';
 import QuizDemo from './QuizDemo';
 import { Brain, Sparkles, Star, Crown } from 'lucide-react';
 import { Spotlight, GridBackground } from '@/components/magicui/spotlight-grid';
@@ -104,7 +105,14 @@ const HeroSection: React.FC = () => {
       </div>
       
       {/* Premium Demo Section */}
-      <div className={`w-full max-w-7xl mt-20 z-10 transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
+      <div className={`transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
+        <ShineBorder 
+          borderRadius={24}
+          borderWidth={2}
+          duration={8}
+          color={["hsl(var(--primary))", "hsl(var(--primary)/0.8)", "hsl(var(--primary)/0.6)"]}
+          className="w-full max-w-7xl p-0 bg-transparent"
+        >
         <div className="premium-glass-card relative rounded-3xl overflow-hidden border border-primary/20 shadow-2xl">
           {/* Premium header with glowing effect */}
           <div className="premium-header-gradient backdrop-blur-xl border-b border-primary/20">
@@ -184,6 +192,7 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
         </div>
+        </ShineBorder>
       </div>
     </section>
   );
