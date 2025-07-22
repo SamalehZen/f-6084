@@ -44,12 +44,12 @@ const Header = () => {
 
           <div className="flex items-center space-x-4">
             {user ? (
-              <Button asChild>
-                <Link to="/dashboard" className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/20 rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] flex items-center gap-2">
+              <Link to="/dashboard">
+                <Button className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/20 rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] flex items-center gap-2">
                   <Crown className="h-4 w-4" />
                   Dashboard VIP
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             ) : (
               <>
                 <Link to="/auth">
